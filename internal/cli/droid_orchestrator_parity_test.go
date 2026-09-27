@@ -108,10 +108,10 @@ func TestDroidModelAssignmentsSubstitutionAndPersistence(t *testing.T) {
 		Preset:              model.PresetFullGentleman,
 		Persona:             string(model.PersonaGentleman),
 		DroidModelAssignments: map[string]string{
-			"orchestrator":    "opus",
-			"gentle-ai-apply": "deepseek",
-			"gentle-ai-spec":  "o3-mini",
-			"default":         "sonnet",
+			"orchestrator":    "opus-5.5",
+			"gentle-ai-apply": "gpt-5.6",
+			"gentle-ai-spec":  "fable-5.1",
+			"default":         "sonnet-5",
 		},
 	})
 	if err != nil {
@@ -128,8 +128,8 @@ func TestDroidModelAssignmentsSubstitutionAndPersistence(t *testing.T) {
 	if got := result.Selection.DroidModelAssignments["orchestrator"]; got != model.DroidModelOpus {
 		t.Errorf("sync selection orchestrator = %q, want opus", got)
 	}
-	if got := result.Selection.DroidModelAssignments["gentle-ai-apply"]; got != model.DroidModelDeepSeek {
-		t.Errorf("sync selection gentle-ai-apply = %q, want deepseek", got)
+	if got := result.Selection.DroidModelAssignments["gentle-ai-apply"]; got != model.DroidModelGPT56 {
+		t.Errorf("sync selection gentle-ai-apply = %q, want gpt-5.6", got)
 	}
 
 	adapter, err := agents.NewAdapter(model.AgentDroid)
@@ -143,8 +143,8 @@ func TestDroidModelAssignmentsSubstitutionAndPersistence(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(orchData), "model: claude-opus-4.5") {
-		t.Errorf("gentle-orchestrator model not substituted with claude-opus-4.5, got:\n%s", string(orchData)[:200])
+	if !strings.Contains(string(orchData), "model: claude-opus-5.5") {
+		t.Errorf("gentle-orchestrator model not substituted with claude-opus-5.5, got:\n%s", string(orchData)[:200])
 	}
 
 	// Check gentle-ai-apply model substitution
@@ -152,8 +152,8 @@ func TestDroidModelAssignmentsSubstitutionAndPersistence(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(applyData), "model: deepseek-reasoner") {
-		t.Errorf("gentle-ai-apply model not substituted with deepseek-reasoner, got:\n%s", string(applyData)[:200])
+	if !strings.Contains(string(applyData), "model: gpt-5.6") {
+		t.Errorf("gentle-ai-apply model not substituted with gpt-5.6, got:\n%s", string(applyData)[:200])
 	}
 
 	// Check gentle-ai-spec model substitution
@@ -161,8 +161,8 @@ func TestDroidModelAssignmentsSubstitutionAndPersistence(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(specData), "model: o3-mini") {
-		t.Errorf("gentle-ai-spec model not substituted with o3-mini, got:\n%s", string(specData)[:200])
+	if !strings.Contains(string(specData), "model: claude-fable-5.1") {
+		t.Errorf("gentle-ai-spec model not substituted with claude-fable-5.1, got:\n%s", string(specData)[:200])
 	}
 
 	// Check default fallback model substitution (gentle-ai-explore)
@@ -170,7 +170,7 @@ func TestDroidModelAssignmentsSubstitutionAndPersistence(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(exploreData), "model: claude-3-7-sonnet") {
-		t.Errorf("gentle-ai-explore model not substituted with default claude-3-7-sonnet, got:\n%s", string(exploreData)[:200])
+	if !strings.Contains(string(exploreData), "model: claude-sonnet-5") {
+		t.Errorf("gentle-ai-explore model not substituted with default claude-sonnet-5, got:\n%s", string(exploreData)[:200])
 	}
 }

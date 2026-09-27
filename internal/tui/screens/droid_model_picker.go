@@ -15,23 +15,23 @@ const (
 	DroidPresetBalanced    DroidModelPreset = "balanced"
 	DroidPresetPerformance DroidModelPreset = "performance"
 	DroidPresetEconomy     DroidModelPreset = "economy"
-	DroidPresetOpenWeight  DroidModelPreset = "open-weight"
+	DroidPresetOpenAI      DroidModelPreset = "openai"
 	DroidPresetCustom      DroidModelPreset = "custom"
 )
 
 var droidPresetDescriptions = map[DroidModelPreset]string{
-	DroidPresetBalanced:    "Factory Droid Auto for orchestrator and all sub-agents",
-	DroidPresetPerformance: "Opus for orchestrator & high-cognition phases, Sonnet for execution",
-	DroidPresetEconomy:     "Cost-optimized: Sonnet/o3-mini for reasoning, Auto for routine execution",
-	DroidPresetOpenWeight:  "DeepSeek Reasoner for planning & judging, Qwen Coder for execution",
-	DroidPresetCustom:      "Pick the model for orchestrator, SDD phases, and Judgment Day individually",
+	DroidPresetBalanced:    "Auto model: Factory Droid's internal router manages all phases automatically",
+	DroidPresetPerformance: "Anthropic Frontier: Opus 5.5 & Fable 5.1 for orchestrator & reasoning, Sonnet 5 for execution",
+	DroidPresetEconomy:     "Cost-optimized: Haiku for routine tasks, Sonnet 5 for reasoning, Auto model fallback",
+	DroidPresetOpenAI:      "OpenAI GPT-5.6 for orchestrator and high-reasoning phases, Sonnet 5 for execution",
+	DroidPresetCustom:      "Pick individual models (Auto model, GPT-5.6, Opus 5.5, Fable 5.1, Sonnet 5, Haiku)",
 }
 
 var droidPresetOrder = []DroidModelPreset{
 	DroidPresetBalanced,
 	DroidPresetPerformance,
 	DroidPresetEconomy,
-	DroidPresetOpenWeight,
+	DroidPresetOpenAI,
 	DroidPresetCustom,
 }
 
@@ -39,19 +39,16 @@ var droidPresetConstructors = map[DroidModelPreset]func() map[string]model.Droid
 	DroidPresetBalanced:    model.DroidModelPresetBalanced,
 	DroidPresetPerformance: model.DroidModelPresetPerformance,
 	DroidPresetEconomy:     model.DroidModelPresetEconomy,
-	DroidPresetOpenWeight:  model.DroidModelPresetOpenWeight,
+	DroidPresetOpenAI:      model.DroidModelPresetOpenAI,
 }
 
 var droidAliasOrder = []model.DroidModelAlias{
 	model.DroidModelAuto,
 	model.DroidModelOpus,
+	model.DroidModelFable,
 	model.DroidModelSonnet,
 	model.DroidModelHaiku,
-	model.DroidModelO3Mini,
-	model.DroidModelGPT4o,
-	model.DroidModelDeepSeek,
-	model.DroidModelGemini,
-	model.DroidModelQwen,
+	model.DroidModelGPT56,
 }
 
 var droidPhases = []string{
@@ -264,7 +261,7 @@ func renderDroidCustomPhaseList(state DroidModelPickerState, cursor int) string 
 
 	b.WriteString(styles.TitleStyle.Render("Custom Factory Droid Model Assignments"))
 	b.WriteString("\n\n")
-	b.WriteString(styles.SubtextStyle.Render("Press enter on a role to cycle: auto → opus → sonnet → haiku → o3-mini → gpt-4o → deepseek → gemini → qwen"))
+	b.WriteString(styles.SubtextStyle.Render("Press enter on a role to cycle: auto → opus-5.5 → fable-5.1 → sonnet-5 → haiku → gpt-5.6"))
 	b.WriteString("\n\n")
 
 	for idx, phase := range droidPhases {
@@ -296,22 +293,16 @@ func droidAliasTag(alias model.DroidModelAlias) string {
 	switch alias {
 	case model.DroidModelAuto:
 		return styles.SuccessStyle.Render("[auto]")
-	case model.DroidModelOpus:
-		return styles.WarningStyle.Render("[opus]")
-	case model.DroidModelSonnet:
-		return styles.SuccessStyle.Render("[sonnet]")
+	case model.DroidModelOpus, "opus":
+		return styles.WarningStyle.Render("[opus-5.5]")
+	case model.DroidModelFable, "fable":
+		return styles.WarningStyle.Render("[fable-5.1]")
+	case model.DroidModelSonnet, "sonnet":
+		return styles.SuccessStyle.Render("[sonnet-5]")
 	case model.DroidModelHaiku:
 		return styles.SubtextStyle.Render("[haiku]")
-	case model.DroidModelO3Mini:
-		return styles.WarningStyle.Render("[o3-mini]")
-	case model.DroidModelGPT4o:
-		return styles.SuccessStyle.Render("[gpt-4o]")
-	case model.DroidModelDeepSeek:
-		return styles.WarningStyle.Render("[deepseek]")
-	case model.DroidModelGemini:
-		return styles.SuccessStyle.Render("[gemini]")
-	case model.DroidModelQwen:
-		return styles.SubtextStyle.Render("[qwen]")
+	case model.DroidModelGPT56:
+		return styles.TitleStyle.Render("[gpt-5.6]")
 	default:
 		return styles.SuccessStyle.Render("[auto]")
 	}

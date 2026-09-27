@@ -17,7 +17,7 @@ func TestRenderDroidModelPicker_ShowsRequestedCopy(t *testing.T) {
 	if !strings.Contains(out, "Choose how models are assigned to Factory Droid SDD phases and roles") {
 		t.Fatalf("expected Droid subtitle in output, got:\n%s", out)
 	}
-	for _, want := range []string{"balanced", "performance", "economy", "open-weight", "custom"} {
+	for _, want := range []string{"balanced", "performance", "economy", "openai", "custom"} {
 		if !strings.Contains(out, want) {
 			t.Fatalf("expected preset %q in output, got:\n%s", want, out)
 		}
@@ -93,13 +93,10 @@ func TestHandleDroidModelPickerNav_CustomCyclesAcrossDroidOptions(t *testing.T) 
 	}
 
 	for _, want := range []model.DroidModelAlias{
+		model.DroidModelFable,
 		model.DroidModelSonnet,
 		model.DroidModelHaiku,
-		model.DroidModelO3Mini,
-		model.DroidModelGPT4o,
-		model.DroidModelDeepSeek,
-		model.DroidModelGemini,
-		model.DroidModelQwen,
+		model.DroidModelGPT56,
 		model.DroidModelAuto,
 	} {
 		handled, _ = HandleDroidModelPickerNav("enter", &state, 0)
@@ -127,11 +124,11 @@ func TestHandleDroidModelPickerNav_CustomCyclesAcrossDroidOptions(t *testing.T) 
 
 func TestDroidNamedPresetPreservesCustomKeys(t *testing.T) {
 	state := NewDroidModelPickerStateFromAssignments(map[string]model.DroidModelAlias{
-		"my-custom-phase": model.DroidModelGemini,
+		"my-custom-phase": model.DroidModelGPT56,
 		"default":         model.DroidModelHaiku,
 	})
 	_, saved := HandleDroidModelPickerNav("enter", &state, 1) // performance preset
-	if saved["my-custom-phase"] != model.DroidModelGemini {
+	if saved["my-custom-phase"] != model.DroidModelGPT56 {
 		t.Fatalf("custom assignment lost when selecting preset: %v", saved)
 	}
 	if saved["orchestrator"] != model.DroidModelOpus {
@@ -146,7 +143,7 @@ func TestNewDroidModelPickerStateFromAssignments_MatchesPresetsAndCustom(t *test
 	}
 
 	customState := NewDroidModelPickerStateFromAssignments(map[string]model.DroidModelAlias{
-		"orchestrator": model.DroidModelGemini,
+		"orchestrator": model.DroidModelGPT56,
 		"default":      model.DroidModelAuto,
 	})
 	if customState.Preset != DroidPresetCustom {

@@ -9,13 +9,18 @@ func TestDroidModelAlias_Valid(t *testing.T) {
 	}{
 		{DroidModelAuto, true},
 		{DroidModelOpus, true},
+		{DroidModelFable, true},
 		{DroidModelSonnet, true},
 		{DroidModelHaiku, true},
-		{DroidModelO3Mini, true},
-		{DroidModelGPT4o, true},
-		{DroidModelDeepSeek, true},
-		{DroidModelGemini, true},
-		{DroidModelQwen, true},
+		{DroidModelGPT56, true},
+		{"opus", true},
+		{"fable", true},
+		{"sonnet", true},
+		{"o3-mini", false},
+		{"gpt-4o", false},
+		{"deepseek", false},
+		{"gemini", false},
+		{"qwen", false},
 		{"unknown", false},
 		{"", false},
 	} {
@@ -31,14 +36,15 @@ func TestDroidModelID(t *testing.T) {
 		want  string
 	}{
 		{DroidModelAuto, "auto"},
-		{DroidModelOpus, "claude-opus-4.5"},
-		{DroidModelSonnet, "claude-3-7-sonnet"},
+		{DroidModelOpus, "claude-opus-5.5"},
+		{"opus", "claude-opus-5.5"},
+		{DroidModelFable, "claude-fable-5.1"},
+		{"fable", "claude-fable-5.1"},
+		{DroidModelSonnet, "claude-sonnet-5"},
+		{"sonnet", "claude-sonnet-5"},
 		{DroidModelHaiku, "claude-haiku-4.5"},
-		{DroidModelO3Mini, "o3-mini"},
-		{DroidModelGPT4o, "gpt-4o"},
-		{DroidModelDeepSeek, "deepseek-reasoner"},
-		{DroidModelGemini, "gemini-2.5-pro"},
-		{DroidModelQwen, "qwen3-coder-next"},
+		{DroidModelGPT56, "gpt-5.6"},
+		{"gpt-5.6", "gpt-5.6"},
 		{"custom", "auto"},
 	} {
 		if got := DroidModelID(tc.alias); got != tc.want {
@@ -55,7 +61,7 @@ func TestDroidModelPresets(t *testing.T) {
 		{"balanced", DroidModelPresetBalanced()},
 		{"performance", DroidModelPresetPerformance()},
 		{"economy", DroidModelPresetEconomy()},
-		{"open-weight", DroidModelPresetOpenWeight()},
+		{"openai", DroidModelPresetOpenAI()},
 	}
 
 	requiredKeys := []string{

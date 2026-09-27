@@ -92,8 +92,8 @@ func TestNativeAgentOwnedModelUpdates(t *testing.T) {
 	}{
 		{model.AgentClaudeCode, "jd-judge-a.md", reviewassets.InstallOptions{ClaudePhaseAssignments: map[string]model.ClaudePhaseAssignment{"jd-judge-a": {Model: model.ClaudeModelOpus, Effort: model.ClaudeEffortHigh}}}, "effort: high"},
 		{model.AgentKiroIDE, "jd-judge-a.md", reviewassets.InstallOptions{KiroModelAssignments: map[string]model.KiroModelAlias{"jd-judge-a": model.KiroModelOpus}}, "model: claude-opus"},
-		{model.AgentDroid, "gentle-orchestrator.md", reviewassets.InstallOptions{DroidModelAssignments: map[string]model.DroidModelAlias{"orchestrator": model.DroidModelOpus}}, "model: claude-opus-4.5"},
-		{model.AgentDroid, "gentle-ai-apply.md", reviewassets.InstallOptions{DroidModelAssignments: map[string]model.DroidModelAlias{"gentle-ai-apply": model.DroidModelDeepSeek}}, "model: deepseek-reasoner"},
+		{model.AgentDroid, "gentle-orchestrator.md", reviewassets.InstallOptions{DroidModelAssignments: map[string]model.DroidModelAlias{"orchestrator": model.DroidModelOpus}}, "model: claude-opus-5.5"},
+		{model.AgentDroid, "gentle-ai-apply.md", reviewassets.InstallOptions{DroidModelAssignments: map[string]model.DroidModelAlias{"gentle-ai-apply": model.DroidModelGPT56}}, "model: gpt-5.6"},
 	} {
 		t.Run(string(tc.agent), func(t *testing.T) {
 			adapter, err := agents.NewAdapter(tc.agent)
