@@ -301,6 +301,9 @@ var featureClaimsByAgent = map[model.AgentID]AgentFeatureClaims{
 	model.AgentCursor: {
 		FileSubAgents: true, Skills: true, SystemPrompt: true, MCP: true,
 	},
+	model.AgentDroid: {
+		FileSubAgents: true, Skills: true, SystemPrompt: true, MCP: true,
+	},
 	model.AgentGeminiCLI: {
 		Skills: true, SystemPrompt: true, MCP: true,
 	},

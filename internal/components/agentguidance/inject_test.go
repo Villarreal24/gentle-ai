@@ -151,8 +151,8 @@ func TestRemoteAuthorizationPrimaryCarriers(t *testing.T) {
 			}
 		})
 	}
-	if covered != 15 {
-		t.Fatalf("covered %d non-Pi clients, want 15", covered)
+	if covered != supportedAgentCount-1 {
+		t.Fatalf("covered %d non-Pi clients, want %d", covered, supportedAgentCount-1)
 	}
 }
 

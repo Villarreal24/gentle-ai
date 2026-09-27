@@ -45,7 +45,7 @@ func TestNativeAgentManifestShipsReviewAgentsOnlyToRDDRuntimes(t *testing.T) {
 		}
 	}
 	for _, want := range []string{"jd-fix-agent.md", "jd-judge-a.md", "jd-judge-b.md"} {
-		for _, agent := range []model.AgentID{model.AgentClaudeCode, model.AgentKiroIDE} {
+		for _, agent := range []model.AgentID{model.AgentClaudeCode, model.AgentKiroIDE, model.AgentDroid} {
 			if !containsName(NativeAgentManifest[agent], want) {
 				t.Errorf("%s lost Judgment Day agent %s", agent, want)
 			}
@@ -59,12 +59,22 @@ func TestNativeAgentManifestShipsReviewAgentsOnlyToRDDRuntimes(t *testing.T) {
 			t.Errorf("Claude Code lost RDD agent %s", want)
 		}
 	}
+	for _, want := range []string{
+		"gentle-ai-apply.md", "gentle-ai-archive.md", "gentle-ai-design.md",
+		"gentle-ai-explore.md", "gentle-ai-init.md", "gentle-ai-propose.md",
+		"gentle-ai-spec.md", "gentle-ai-tasks.md", "gentle-ai-verify.md",
+		"gentle-ai-worker.md", "jd-fix-agent.md", "jd-judge-a.md", "jd-judge-b.md",
+	} {
+		if !containsName(NativeAgentManifest[model.AgentDroid], want) {
+			t.Errorf("Droid lost sub-agent %s", want)
+		}
+	}
 }
 
 func TestFreshInstallOnNonRDDRuntimesInstallsNoReviewAgents(t *testing.T) {
 	t.Parallel()
 
-	for _, agent := range []model.AgentID{model.AgentCursor, model.AgentKiroIDE, model.AgentKimi} {
+	for _, agent := range []model.AgentID{model.AgentCursor, model.AgentKiroIDE, model.AgentKimi, model.AgentDroid} {
 		t.Run(string(agent), func(t *testing.T) {
 			t.Parallel()
 

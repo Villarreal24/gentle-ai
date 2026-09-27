@@ -46,6 +46,7 @@ func TestFreshInstallShipsReviewAgentsOnlyToRDDRuntimes(t *testing.T) {
 		{model.AgentCursor, false, false},
 		{model.AgentKiroIDE, false, true},
 		{model.AgentKimi, false, false},
+		{model.AgentDroid, false, true},
 	} {
 		t.Run(string(tc.agent), func(t *testing.T) {
 			home := t.TempDir()
@@ -64,6 +65,13 @@ func TestFreshInstallShipsReviewAgentsOnlyToRDDRuntimes(t *testing.T) {
 			if tc.agent == model.AgentKimi {
 				if _, err := os.Stat(filepath.Join(dir, "gentleman.yaml")); err != nil {
 					t.Fatalf("Kimi lost its main agent: %v", err)
+				}
+			}
+			if tc.agent == model.AgentDroid {
+				for _, name := range reviewassets.NativeAgentManifest[model.AgentDroid] {
+					if _, err := os.Stat(filepath.Join(dir, name)); err != nil {
+						t.Fatalf("Droid lost sub-agent %s: %v", name, err)
+					}
 				}
 			}
 		})

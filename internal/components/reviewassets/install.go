@@ -26,6 +26,12 @@ var NativeAgentManifest = map[model.AgentID][]string{
 	model.AgentClaudeCode: {"jd-fix-agent.md", "jd-judge-a.md", "jd-judge-b.md", "review-readability.md", "review-refuter.md", "review-reliability.md", "review-resilience.md", "review-risk.md"},
 	model.AgentKiroIDE:    {"jd-fix-agent.md", "jd-judge-a.md", "jd-judge-b.md"},
 	model.AgentKimi:       {"gentleman.yaml"},
+	model.AgentDroid: {
+		"gentle-ai-apply.md", "gentle-ai-archive.md", "gentle-ai-design.md",
+		"gentle-ai-explore.md", "gentle-ai-init.md", "gentle-ai-propose.md",
+		"gentle-ai-spec.md", "gentle-ai-tasks.md", "gentle-ai-verify.md",
+		"gentle-ai-worker.md", "jd-fix-agent.md", "jd-judge-a.md", "jd-judge-b.md",
+	},
 }
 
 // RetiredNativeAgentManifest lists the review agents earlier releases installed

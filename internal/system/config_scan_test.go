@@ -85,6 +85,7 @@ func TestScanConfigs_AgentFieldMatchesModelAgentID(t *testing.T) {
 		"pi":             false,
 		"trae-ide":       false,
 		"hermes":         false,
+		"droid":          false,
 	}
 
 	for _, c := range configs {

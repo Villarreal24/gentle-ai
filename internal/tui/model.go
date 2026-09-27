@@ -4601,6 +4601,8 @@ func detectedAgentIDs(detection system.DetectionResult) []model.AgentID {
 			selected = append(selected, model.AgentPi)
 		case string(model.AgentHermes):
 			selected = append(selected, model.AgentHermes)
+		case string(model.AgentDroid):
+			selected = append(selected, model.AgentDroid)
 		}
 	}
 	return selected
@@ -4972,6 +4974,8 @@ func agentBuilderSkillsDir(agentID model.AgentID) (string, bool) {
 		return filepath.Join(home, ".gemini", "skills"), true
 	case model.AgentCodex:
 		return filepath.Join(home, ".codex", "skills"), true
+	case model.AgentDroid:
+		return filepath.Join(home, ".factory", "skills"), true
 	default:
 		return "", false
 	}

@@ -95,3 +95,36 @@ func TestIsSupportedAgentAcceptsHermes(t *testing.T) {
 		t.Fatalf("IsSupportedAgent(%q) = false, want true", model.AgentHermes)
 	}
 }
+
+func TestAllAgentsIncludesDroid(t *testing.T) {
+	agents := AllAgents()
+
+	for _, agent := range agents {
+		if agent.ID != model.AgentDroid {
+			continue
+		}
+
+		if agent.Name != "Factory Droid" {
+			t.Fatalf("Droid Name = %q, want Factory Droid", agent.Name)
+		}
+
+		if agent.Tier != model.TierFull {
+			t.Fatalf("Droid Tier = %q, want %q", agent.Tier, model.TierFull)
+		}
+
+		if agent.ConfigPath != "~/.factory" {
+			t.Fatalf("Droid ConfigPath = %q, want ~/.factory", agent.ConfigPath)
+		}
+
+		return
+	}
+
+	t.Fatalf("AllAgents() missing %s", model.AgentDroid)
+}
+
+func TestIsSupportedAgentAcceptsDroid(t *testing.T) {
+	if !IsSupportedAgent(model.AgentDroid) {
+		t.Fatalf("IsSupportedAgent(%q) = false, want true", model.AgentDroid)
+	}
+}
+
