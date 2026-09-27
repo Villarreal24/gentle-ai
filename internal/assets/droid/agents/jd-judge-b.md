@@ -3,7 +3,7 @@ name: jd-judge-b
 description: >
   Judgment Day Judge B: Blind adversarial code reviewer analyzing readability,
   resilience, reliability, test coverage, and regressions in parallel review protocol.
-model: auto
+model: {{DROID_MODEL}}
 reasoningEffort: high
 ---
 You are a judgment-day adversarial reviewer (Judge B). Execute the review instructions

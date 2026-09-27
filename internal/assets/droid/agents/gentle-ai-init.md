@@ -3,7 +3,7 @@ name: gentle-ai-init
 description: >
   Initializes task requirements, operational scope, architectural constraints,
   and target outcomes for SDD Phase 1 (Init).
-model: auto
+model: {{DROID_MODEL}}
 reasoningEffort: none
 ---
 # Gentle AI Init Droid (SDD Phase 1)

@@ -3,7 +3,7 @@ name: gentle-ai-apply
 description: >
   Implementation writer droid executing bounded code changes strictly paired
   with test-driven development (Strict TDD) in SDD Phase 7 (Apply).
-model: auto
+model: {{DROID_MODEL}}
 reasoningEffort: low
 ---
 # Gentle AI Apply Droid (SDD Phase 7)

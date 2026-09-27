@@ -3,7 +3,7 @@ name: jd-judge-a
 description: >
   Judgment Day Judge A: Blind adversarial code reviewer analyzing architectural
   integrity, risk classification, and defect prevention in parallel review protocol.
-model: auto
+model: {{DROID_MODEL}}
 reasoningEffort: high
 ---
 You are a judgment-day adversarial reviewer (Judge A). Execute the review instructions

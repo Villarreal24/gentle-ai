@@ -3,7 +3,7 @@ name: gentle-ai-design
 description: >
   Technical designer for software architecture, API contracts, component boundaries,
   and state mutations in SDD Phase 5 (Design).
-model: auto
+model: {{DROID_MODEL}}
 reasoningEffort: high
 ---
 # Gentle AI Design Droid (SDD Phase 5)

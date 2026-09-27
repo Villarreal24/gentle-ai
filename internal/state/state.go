@@ -71,6 +71,9 @@ type InstallState struct {
 	// written before Kiro had its own picker options.
 	KiroModelAssignments map[string]string `json:"kiro_model_assignments,omitempty"`
 
+	// DroidModelAssignments maps SDD phase and role names to a Factory Droid-native model alias.
+	DroidModelAssignments map[string]string `json:"droid_model_assignments,omitempty"`
+
 	// CodexModelAssignments maps SDD phase names to a Codex reasoning_effort value
 	// (low|medium|high|xhigh). Persisted so that `gentle-ai sync` preserves the
 	// user's per-phase effort preset instead of falling back to Recommended.
@@ -262,6 +265,7 @@ func MergeAgents(existing InstallState, newAgents []string) InstallState {
 		ClaudeModelAssignments:      existing.ClaudeModelAssignments,
 		ClaudePhaseAssignments:      existing.ClaudePhaseAssignments,
 		KiroModelAssignments:        existing.KiroModelAssignments,
+		DroidModelAssignments:       existing.DroidModelAssignments,
 		CodexModelAssignments:       existing.CodexModelAssignments,
 		CodexOrchestratorAssignment: existing.CodexOrchestratorAssignment,
 		CodexCarrilModelAssignments: existing.CodexCarrilModelAssignments,

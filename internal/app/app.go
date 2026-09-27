@@ -654,6 +654,7 @@ func tuiExecuteWithBackground(
 			installState.ClaudeModelAssignments = claudeLegacyAssignmentsForState(selection.ClaudeModelAssignments, claudePhaseState)
 			installState.ClaudePhaseAssignments = claudePhaseState
 			installState.KiroModelAssignments = kiroAliasesToStrings(selection.KiroModelAssignments)
+			installState.DroidModelAssignments = droidAliasesToStrings(selection.DroidModelAssignments)
 			installState.CodexModelAssignments = codexEffortsToStrings(selection.CodexModelAssignments)
 			installState.CodexOrchestratorAssignment = codexOrchestratorToState(selection.CodexOrchestratorAssignment)
 			installState.CodexCarrilModelAssignments = selection.CodexCarrilModelAssignments
@@ -833,6 +834,9 @@ func applyOverrides(selection *model.Selection, overrides *model.SyncOverrides) 
 	if overrides.KiroModelAssignments != nil {
 		selection.KiroModelAssignments = overrides.KiroModelAssignments
 	}
+	if overrides.DroidModelAssignments != nil {
+		selection.DroidModelAssignments = overrides.DroidModelAssignments
+	}
 	if overrides.ClearCodexOrchestratorAssignment {
 		selection.CodexOrchestratorAssignment = nil
 		selection.ClearCodexOrchestratorAssignment = true
@@ -918,6 +922,13 @@ func loadPersistedAssignments(homeDir string, selection *model.Selection) {
 		}
 		selection.KiroModelAssignments = m
 	}
+	if len(selection.DroidModelAssignments) == 0 && len(s.DroidModelAssignments) > 0 {
+		m := make(map[string]model.DroidModelAlias, len(s.DroidModelAssignments))
+		for k, v := range s.DroidModelAssignments {
+			m[k] = model.DroidModelAlias(v)
+		}
+		selection.DroidModelAssignments = m
+	}
 	if len(selection.CodexModelAssignments) == 0 && len(s.CodexModelAssignments) > 0 {
 		m := make(map[string]model.CodexEffort, len(s.CodexModelAssignments))
 		for k, v := range s.CodexModelAssignments {
@@ -959,13 +970,14 @@ func persistAssignments(homeDir string, selection model.Selection) error {
 	hasAssignmentSignal := selection.ClaudeModelAssignments != nil ||
 		selection.ClaudePhaseAssignments != nil ||
 		selection.KiroModelAssignments != nil ||
+		selection.DroidModelAssignments != nil ||
 		selection.ModelAssignments != nil ||
 		selection.CodexModelAssignments != nil ||
 		selection.CodexOrchestratorAssignment != nil ||
 		selection.ClearCodexOrchestratorAssignment ||
 		selection.CodexCarrilModelAssignments != nil ||
 		selection.CodexPhaseModelAssignments != nil
-	if len(selection.ClaudeModelAssignments) == 0 && len(selection.ClaudePhaseAssignments) == 0 && len(selection.KiroModelAssignments) == 0 && len(selection.ModelAssignments) == 0 && len(selection.CodexModelAssignments) == 0 && len(selection.CodexCarrilModelAssignments) == 0 && len(selection.CodexPhaseModelAssignments) == 0 && !hasAssignmentSignal {
+	if len(selection.ClaudeModelAssignments) == 0 && len(selection.ClaudePhaseAssignments) == 0 && len(selection.KiroModelAssignments) == 0 && len(selection.DroidModelAssignments) == 0 && len(selection.ModelAssignments) == 0 && len(selection.CodexModelAssignments) == 0 && len(selection.CodexCarrilModelAssignments) == 0 && len(selection.CodexPhaseModelAssignments) == 0 && !hasAssignmentSignal {
 		return nil
 	}
 	// The whole read-modify-write runs under the canonical install-state lock:
@@ -1001,6 +1013,13 @@ func persistAssignments(homeDir string, selection model.Selection) error {
 				current.KiroModelAssignments = kiroAliasesToStrings(selection.KiroModelAssignments)
 			} else {
 				current.KiroModelAssignments = nil
+			}
+		}
+		if selection.DroidModelAssignments != nil {
+			if len(selection.DroidModelAssignments) > 0 {
+				current.DroidModelAssignments = droidAliasesToStrings(selection.DroidModelAssignments)
+			} else {
+				current.DroidModelAssignments = nil
 			}
 		}
 		if selection.ClearCodexOrchestratorAssignment {
@@ -1084,6 +1103,17 @@ func claudePhaseAssignmentsToState(m map[string]model.ClaudePhaseAssignment) map
 }
 
 func kiroAliasesToStrings(m map[string]model.KiroModelAlias) map[string]string {
+	if len(m) == 0 {
+		return nil
+	}
+	out := make(map[string]string, len(m))
+	for k, v := range m {
+		out[k] = string(v)
+	}
+	return out
+}
+
+func droidAliasesToStrings(m map[string]model.DroidModelAlias) map[string]string {
 	if len(m) == 0 {
 		return nil
 	}

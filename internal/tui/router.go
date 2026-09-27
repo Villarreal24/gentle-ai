@@ -14,6 +14,7 @@ var linearRoutes = map[Screen]Route{
 	ScreenClaudeModelPicker:              {Forward: ScreenDependencyTree, Backward: ScreenPreset},
 	ScreenKiroModelPicker:                {Forward: ScreenDependencyTree, Backward: ScreenPreset},
 	ScreenCodexModelPicker:               {Forward: ScreenDependencyTree, Backward: ScreenPreset},
+	ScreenDroidModelPicker:               {Forward: ScreenDependencyTree, Backward: ScreenPreset},
 	ScreenOpenCodePluginResult:           {Backward: ScreenWelcome},
 	ScreenOpenCodePluginUninstall:        {Backward: ScreenWelcome},
 	ScreenOpenCodePluginUninstallConfirm: {Backward: ScreenOpenCodePluginUninstall},

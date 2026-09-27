@@ -14,6 +14,7 @@ type Selection struct {
 	ClaudeModelAssignments           map[string]ClaudeModelAlias      // key = phase name; value = fable|opus|sonnet|haiku
 	ClaudePhaseAssignments           map[string]ClaudePhaseAssignment // key = phase name; value = Claude model+effort
 	KiroModelAssignments             map[string]KiroModelAlias        // key = phase name; value = Kiro-native model alias
+	DroidModelAssignments            map[string]DroidModelAlias       // key = phase name; value = Droid-native model alias
 	CodexModelAssignments            map[string]CodexEffort           // key = phase name; value = low|medium|high|xhigh
 	CodexOrchestratorAssignment      *CodexOrchestratorAssignment     // non-nil = apply curated top-level Codex model/effort
 	ClearCodexOrchestratorAssignment bool                             // true = clear persisted curated assignment while preserving config.toml
@@ -97,6 +98,7 @@ type SyncOverrides struct {
 	ClaudeModelAssignments           map[string]ClaudeModelAlias      // nil = no override; empty map = reset to defaults
 	ClaudePhaseAssignments           map[string]ClaudePhaseAssignment // nil = no override; empty map = reset to defaults
 	KiroModelAssignments             map[string]KiroModelAlias        // nil = no override; empty map = reset to defaults
+	DroidModelAssignments            map[string]DroidModelAlias       // nil = no override; empty map = reset to defaults
 	CodexModelAssignments            map[string]CodexEffort           // nil = no override; empty map = reset to defaults
 	CodexOrchestratorAssignment      *CodexOrchestratorAssignment     // non-nil = apply curated top-level Codex model/effort
 	ClearCodexOrchestratorAssignment bool                             // true = clear persisted curated assignment while preserving config.toml

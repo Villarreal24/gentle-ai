@@ -3,7 +3,7 @@ name: gentle-ai-spec
 description: >
   Specification author for formal behavior-driven requirements (BDD Given/When/Then),
   invariants, and edge cases in SDD Phase 4 (Spec).
-model: auto
+model: {{DROID_MODEL}}
 reasoningEffort: high
 ---
 # Gentle AI Spec Droid (SDD Phase 4)

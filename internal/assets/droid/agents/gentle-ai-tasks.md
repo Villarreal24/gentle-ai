@@ -3,7 +3,7 @@ name: gentle-ai-tasks
 description: >
   Task decomposition planner breaking technical designs into atomic, ordered,
   and independently verifiable implementation units in SDD Phase 6 (Tasks).
-model: auto
+model: {{DROID_MODEL}}
 reasoningEffort: medium
 ---
 # Gentle AI Tasks Droid (SDD Phase 6)

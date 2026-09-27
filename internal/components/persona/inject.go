@@ -614,6 +614,8 @@ func gentlemanPersonaContent(agent model.AgentID) string {
 		return assets.MustRead("kiro/persona-gentleman.md")
 	case model.AgentHermes:
 		return assets.MustRead("hermes/persona-gentleman.md")
+	case model.AgentDroid:
+		return assets.MustRead("droid/persona-gentleman.md")
 	default:
 		return assets.MustRead("generic/persona-gentleman.md")
 	}

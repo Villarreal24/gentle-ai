@@ -1,7 +1,7 @@
 ---
 name: gentle-ai-explore
 description: Read-only explorer droid for mapping codebase structure, symbols, and dependencies
-model: auto
+model: {{DROID_MODEL}}
 reasoningEffort: none
 ---
 # Gentle AI Explorer Droid

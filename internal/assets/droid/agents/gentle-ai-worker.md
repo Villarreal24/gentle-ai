@@ -1,7 +1,7 @@
 ---
 name: gentle-ai-worker
 description: Delegated writer droid for implementation tasks in Gentle-AI SDD / ODD
-model: auto
+model: {{DROID_MODEL}}
 reasoningEffort: low
 ---
 # Gentle AI Worker Droid

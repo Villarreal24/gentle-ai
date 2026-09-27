@@ -59,6 +59,7 @@ func TestConditionalPickerNavigationResetsState(t *testing.T) {
 	}{
 		{"Kiro", ScreenKiroModelPicker},
 		{"Codex", ScreenCodexModelPicker},
+		{"Droid", ScreenDroidModelPicker},
 	} {
 		t.Run(tc.name+" custom starts at first phase", func(t *testing.T) {
 			m := NewModel(system.DetectionResult{}, "dev")
@@ -66,6 +67,9 @@ func TestConditionalPickerNavigationResetsState(t *testing.T) {
 			if tc.screen == ScreenKiroModelPicker {
 				m.Cursor = 4 // Kiro has an additional Open Weight preset before Custom.
 				m.KiroModelPicker = screens.NewKiroModelPickerState()
+			} else if tc.screen == ScreenDroidModelPicker {
+				m.Cursor = 4 // Droid has an Open Weight preset before Custom.
+				m.DroidModelPicker = screens.NewDroidModelPickerState()
 			} else {
 				m.CodexModelPicker = screens.NewCodexModelPickerState()
 			}

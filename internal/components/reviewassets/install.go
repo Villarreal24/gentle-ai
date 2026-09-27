@@ -30,7 +30,8 @@ var NativeAgentManifest = map[model.AgentID][]string{
 		"gentle-ai-apply.md", "gentle-ai-archive.md", "gentle-ai-design.md",
 		"gentle-ai-explore.md", "gentle-ai-init.md", "gentle-ai-propose.md",
 		"gentle-ai-spec.md", "gentle-ai-tasks.md", "gentle-ai-verify.md",
-		"gentle-ai-worker.md", "jd-fix-agent.md", "jd-judge-a.md", "jd-judge-b.md",
+		"gentle-ai-worker.md", "gentle-orchestrator.md", "jd-fix-agent.md",
+		"jd-judge-a.md", "jd-judge-b.md",
 	},
 }
 
@@ -64,6 +65,7 @@ type InstallOptions struct {
 	ClaudeModelAssignments    map[string]model.ClaudeModelAlias
 	ClaudePhaseAssignments    map[string]model.ClaudePhaseAssignment
 	KiroModelAssignments      map[string]model.KiroModelAlias
+	DroidModelAssignments     map[string]model.DroidModelAlias
 	CodeGraphGuidanceMarkdown string
 }
 type InstallResult struct {
@@ -79,6 +81,9 @@ type kiroModelResolver interface {
 }
 type claudeModelResolver interface {
 	ClaudeModelID(model.ClaudeModelAlias) string
+}
+type droidModelResolver interface {
+	DroidModelID(model.DroidModelAlias) string
 }
 
 // InstallNativeAgents installs only retained review, Judgment Day, and Kimi native agents.
@@ -264,6 +269,21 @@ func renderNativeAgent(adapter agents.Adapter, name string, opts InstallOptions)
 			content = strings.ReplaceAll(content, "{{CLAUDE_EFFORT_FRONTMATTER}}\n", "")
 		}
 		content = strings.ReplaceAll(content, "{{CLAUDE_EFFORT_FRONTMATTER}}", effort)
+	}
+	if dmr, ok := adapter.(droidModelResolver); ok {
+		alias := model.DroidModelAuto
+		if selected, found := opts.DroidModelAssignments[phase]; found {
+			alias = selected
+		} else if phase == "gentle-orchestrator" {
+			if selected, found := opts.DroidModelAssignments["orchestrator"]; found {
+				alias = selected
+			} else if selected, found := opts.DroidModelAssignments["default"]; found {
+				alias = selected
+			}
+		} else if selected, found := opts.DroidModelAssignments["default"]; found {
+			alias = selected
+		}
+		content = strings.ReplaceAll(content, "{{DROID_MODEL}}", dmr.DroidModelID(alias))
 	}
 	content = engramToolPlaceholder.ReplaceAllString(content, "mcp__engram__$1, mcp__plugin_engram_engram__$1")
 	if filepath.Ext(name) == ".md" {

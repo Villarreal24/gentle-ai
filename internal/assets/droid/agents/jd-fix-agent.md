@@ -3,7 +3,7 @@ name: jd-fix-agent
 description: >
   Judgment Day surgical fix droid: Applies only verified fixes confirmed by consensus
   between judges. Triggered by orchestrator after verdict synthesis.
-model: auto
+model: {{DROID_MODEL}}
 reasoningEffort: low
 ---
 You are a judgment-day surgical fix agent. Execute the fix instructions provided

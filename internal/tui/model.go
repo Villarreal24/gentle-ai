@@ -542,6 +542,7 @@ const (
 	ScreenClaudeModelPicker
 	ScreenKiroModelPicker
 	ScreenCodexModelPicker
+	ScreenDroidModelPicker
 	ScreenOpenCodePlugins
 	ScreenOpenCodePluginResult
 	ScreenCommunityTools
@@ -625,6 +626,7 @@ type Model struct {
 	ClaudeModelPicker              screens.ClaudeModelPickerState
 	KiroModelPicker                screens.KiroModelPickerState
 	CodexModelPicker               screens.CodexModelPickerState
+	DroidModelPicker               screens.DroidModelPickerState
 	SkillPicker                    []model.SkillID
 	Err                            error
 
@@ -1512,6 +1514,8 @@ func (m Model) View() string {
 		return screens.RenderKiroModelPicker(m.KiroModelPicker, m.Cursor)
 	case ScreenCodexModelPicker:
 		return screens.RenderCodexModelPicker(m.CodexModelPicker, m.Cursor, m.Height)
+	case ScreenDroidModelPicker:
+		return screens.RenderDroidModelPicker(m.DroidModelPicker, m.Cursor)
 	case ScreenOpenCodePlugins:
 		if m.OperationRunning {
 			return screens.RenderOperationRunning("Installing OpenCode Plugins", "Registering selected plugins...", m.SpinnerFrame)
@@ -1756,6 +1760,31 @@ func (m Model) handleKeyPress(key tea.KeyMsg) (tea.Model, tea.Cmd) {
 						ClearCodexOrchestratorAssignment: m.Selection.ClearCodexOrchestratorAssignment,
 						CodexCarrilModelAssignments:      presetCarrilModels,
 						CodexPhaseModelAssignments:       phaseOverride,
+					}
+					m = m.withResetSyncState()
+					m.setScreen(ScreenSync)
+				} else if next, ok := m.pickerNextScreen(); ok {
+					return m, m.advanceToNextPickerScreen(next)
+				}
+			}
+			return m, nil
+		}
+	}
+
+	if m.Screen == ScreenDroidModelPicker {
+		wasInCustomMode := m.DroidModelPicker.InCustomMode
+		handled, updated := screens.HandleDroidModelPickerNav(keyStr, &m.DroidModelPicker, m.Cursor)
+		if handled {
+			if wasInCustomMode != m.DroidModelPicker.InCustomMode {
+				m.Cursor = 0
+			}
+			if updated != nil {
+				m.Selection.DroidModelAssignments = updated
+				if m.ModelConfigMode {
+					m.ModelConfigMode = false
+					m.PendingSyncOverrides = &model.SyncOverrides{
+						TargetAgents:          []model.AgentID{model.AgentDroid},
+						DroidModelAssignments: updated,
 					}
 					m = m.withResetSyncState()
 					m.setScreen(ScreenSync)
@@ -2310,7 +2339,11 @@ func (m Model) confirmSelection() (tea.Model, tea.Cmd) {
 			m.CodexModelPicker = screens.NewCodexModelPickerStateFromAssignments(m.Selection.CodexModelAssignments)
 			m.restoreCodexCustomAssignments()
 			m.setScreen(ScreenCodexModelPicker)
-		case 4: // Back
+		case 4: // Configure Factory Droid models
+			m.ModelConfigMode = true
+			m.DroidModelPicker = screens.NewDroidModelPickerStateFromAssignments(m.Selection.DroidModelAssignments)
+			m.setScreen(ScreenDroidModelPicker)
+		case 5: // Back
 			m.setScreen(ScreenWelcome)
 		}
 		return m, nil
@@ -2406,6 +2439,18 @@ func (m Model) confirmSelection() (tea.Model, tea.Cmd) {
 		}
 	case ScreenCodexModelPicker:
 		if m.CodexModelPicker.CustomMode == screens.CodexCustomModeNone && m.Cursor == screens.CodexModelPickerOptionCount(m.CodexModelPicker)-1 {
+			if m.ModelConfigMode {
+				m.ModelConfigMode = false
+				m.setScreen(ScreenModelConfig)
+				return m, nil
+			}
+			if prev, ok := m.pickerPreviousScreen(); ok {
+				m.applyPickerEntry(prev)
+			}
+			return m, nil
+		}
+	case ScreenDroidModelPicker:
+		if !m.DroidModelPicker.InCustomMode && m.Cursor == screens.DroidModelPickerOptionCount(m.DroidModelPicker)-1 {
 			if m.ModelConfigMode {
 				m.ModelConfigMode = false
 				m.setScreen(ScreenModelConfig)
@@ -3746,7 +3791,7 @@ func (m Model) goBack(cmd *tea.Cmd) Model {
 	}
 
 	// ModelConfigMode: pickers reached via Model Config shortcut return to ScreenModelConfig.
-	if m.ModelConfigMode && (m.Screen == ScreenClaudeModelPicker || m.Screen == ScreenKiroModelPicker || m.Screen == ScreenCodexModelPicker || m.Screen == ScreenModelPicker) {
+	if m.ModelConfigMode && (m.Screen == ScreenClaudeModelPicker || m.Screen == ScreenKiroModelPicker || m.Screen == ScreenCodexModelPicker || m.Screen == ScreenDroidModelPicker || m.Screen == ScreenModelPicker) {
 		m.ModelConfigMode = false
 		m.setScreen(ScreenModelConfig)
 		return m
@@ -3819,6 +3864,13 @@ func (m Model) goBack(cmd *tea.Cmd) Model {
 	}
 
 	if m.Screen == ScreenCodexModelPicker {
+		if prev, ok := m.pickerPreviousScreen(); ok {
+			m.applyPickerEntry(prev)
+			return m
+		}
+	}
+
+	if m.Screen == ScreenDroidModelPicker {
 		if prev, ok := m.pickerPreviousScreen(); ok {
 			m.applyPickerEntry(prev)
 			return m
@@ -3993,6 +4045,8 @@ func (m Model) optionCount() int {
 		return screens.KiroModelPickerOptionCount(m.KiroModelPicker)
 	case ScreenCodexModelPicker:
 		return screens.CodexModelPickerOptionCount(m.CodexModelPicker)
+	case ScreenDroidModelPicker:
+		return screens.DroidModelPickerOptionCount(m.DroidModelPicker)
 	case ScreenOpenCodePlugins:
 		return screens.OpenCodePluginsOptionCount()
 	case ScreenOpenCodePluginResult:
@@ -4307,6 +4361,10 @@ func (m Model) goBackFromCommunityTools() Model {
 		m.CommunityToolResults = nil
 		m.CommunityToolErr = nil
 		m.setScreen(ScreenWelcome)
+		return m
+	}
+	if m.shouldShowDroidModelPickerScreen() {
+		m.setScreen(ScreenDroidModelPicker)
 		return m
 	}
 	if m.shouldShowCodexModelPickerScreen() {
@@ -4714,6 +4772,10 @@ func (m Model) shouldShowCodexModelPickerScreen() bool {
 	return m.ModelConfigMode
 }
 
+func (m Model) shouldShowDroidModelPickerScreen() bool {
+	return m.ModelConfigMode
+}
+
 // pickerFlowSlice returns the ordered conditional picker chain for the current
 // Selection, filtered by shouldShow* predicates. ScreenPreset is always the
 // first anchor. In non-custom mode ScreenDependencyTree is always the last
@@ -4739,6 +4801,9 @@ func (m Model) pickerFlowSlice() []Screen {
 	}
 	if m.shouldShowCodexModelPickerScreen() {
 		s = append(s, ScreenCodexModelPicker)
+	}
+	if m.shouldShowDroidModelPickerScreen() {
+		s = append(s, ScreenDroidModelPicker)
 	}
 	if !custom {
 		// Non-custom: DependencyTree is the last anchor.
@@ -4805,6 +4870,8 @@ func (m *Model) applyPickerEntry(next Screen) tea.Cmd {
 	case ScreenCodexModelPicker:
 		m.CodexModelPicker = screens.NewCodexModelPickerStateFromAssignments(m.Selection.CodexModelAssignments)
 		m.restoreCodexCustomAssignments()
+	case ScreenDroidModelPicker:
+		m.DroidModelPicker = screens.NewDroidModelPickerStateFromAssignments(m.Selection.DroidModelAssignments)
 	case ScreenModelPicker:
 		discoveryCmd = m.initializeModelPicker()
 	}

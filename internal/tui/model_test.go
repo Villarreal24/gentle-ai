@@ -2813,19 +2813,37 @@ func TestModelConfig_OpenCodePickerNavigation(t *testing.T) {
 	}
 }
 
-// TestModelConfig_BackNavigation verifies that selecting cursor 4 (Back) from
+// TestModelConfig_DroidPickerNavigation verifies that selecting cursor 4
+// from ScreenModelConfig transitions to ScreenDroidModelPicker with ModelConfigMode set.
+func TestModelConfig_DroidPickerNavigation(t *testing.T) {
+	m := NewModel(system.DetectionResult{}, "dev")
+	m.Screen = ScreenModelConfig
+	m.Cursor = 4
+
+	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	state := updated.(Model)
+
+	if state.Screen != ScreenDroidModelPicker {
+		t.Fatalf("ModelConfig cursor=4 (Droid): screen = %v, want %v", state.Screen, ScreenDroidModelPicker)
+	}
+	if !state.ModelConfigMode {
+		t.Fatalf("ModelConfigMode should be true after entering Droid picker from ModelConfig")
+	}
+}
+
+// TestModelConfig_BackNavigation verifies that selecting cursor 5 (Back) from
 // ScreenModelConfig returns to ScreenWelcome.
-// Index 3 is now "Configure Codex models"; Back moved to index 4.
+// Index 4 is "Configure Factory Droid models"; Back moved to index 5.
 func TestModelConfig_BackNavigation(t *testing.T) {
 	m := NewModel(system.DetectionResult{}, "dev")
 	m.Screen = ScreenModelConfig
-	m.Cursor = 4 // Back is now at index 4
+	m.Cursor = 5 // Back is now at index 5
 
 	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 	state := updated.(Model)
 
 	if state.Screen != ScreenWelcome {
-		t.Fatalf("ModelConfig cursor=4 (Back): screen = %v, want %v", state.Screen, ScreenWelcome)
+		t.Fatalf("ModelConfig cursor=5 (Back): screen = %v, want %v", state.Screen, ScreenWelcome)
 	}
 }
 
@@ -3406,6 +3424,44 @@ func TestModelConfig_KiroPickerTriggersSyncScreen(t *testing.T) {
 	}
 	if _, ok := state.PendingSyncOverrides.KiroModelAssignments["sdd-design"]; ok {
 		t.Error("step2: new preset must not introduce SDD assignments")
+	}
+}
+
+func TestModelConfig_DroidPickerTriggersSyncScreen(t *testing.T) {
+	m := NewModel(system.DetectionResult{}, "dev")
+	m.Screen = ScreenModelConfig
+	m.Cursor = 4
+
+	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	state := updated.(Model)
+
+	if state.Screen != ScreenDroidModelPicker {
+		t.Fatalf("step1: screen = %v, want ScreenDroidModelPicker", state.Screen)
+	}
+	if !state.ModelConfigMode {
+		t.Fatalf("step1: ModelConfigMode should be true after entering Droid picker from ModelConfig")
+	}
+
+	updated, _ = state.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	state = updated.(Model)
+
+	if state.Screen != ScreenSync {
+		t.Fatalf("step2: screen = %v, want ScreenSync", state.Screen)
+	}
+	if state.ModelConfigMode {
+		t.Fatalf("step2: ModelConfigMode should be cleared after routing to ScreenSync")
+	}
+	if state.PendingSyncOverrides == nil {
+		t.Fatalf("step2: PendingSyncOverrides should be non-nil after Droid model selection")
+	}
+	if got := state.PendingSyncOverrides.TargetAgents; len(got) != 1 || got[0] != model.AgentDroid {
+		t.Fatalf("step2: TargetAgents = %v, want [%s]", got, model.AgentDroid)
+	}
+	if got := state.PendingSyncOverrides.DroidModelAssignments["default"]; got != model.DroidModelAuto {
+		t.Errorf("step2: default = %q, want %q", got, model.DroidModelAuto)
+	}
+	if got := state.PendingSyncOverrides.DroidModelAssignments["orchestrator"]; got != model.DroidModelAuto {
+		t.Errorf("step2: orchestrator = %q, want %q", got, model.DroidModelAuto)
 	}
 }
 
@@ -6710,7 +6766,7 @@ func TestPickerFlowSlice(t *testing.T) {
 				m.ModelConfigMode = true
 				return m
 			},
-			wantSlice: []Screen{ScreenPreset, ScreenClaudeModelPicker, ScreenKiroModelPicker, ScreenCodexModelPicker, ScreenDependencyTree},
+			wantSlice: []Screen{ScreenPreset, ScreenClaudeModelPicker, ScreenKiroModelPicker, ScreenCodexModelPicker, ScreenDroidModelPicker, ScreenDependencyTree},
 		},
 	}
 

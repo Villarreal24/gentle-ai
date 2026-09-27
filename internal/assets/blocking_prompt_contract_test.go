@@ -50,6 +50,7 @@ var blockingPromptRoutes = map[string]blockingPromptRoute{
 	"claude/orchestrator.md":      {nativeTool: "`AskUserQuestion`"},
 	"codex/orchestrator.md":       {},
 	"cursor/orchestrator.md":      {},
+	"droid/orchestrator.md":       {},
 	"gemini/orchestrator.md":      {},
 	"generic/orchestrator.md":     {},
 	"hermes/orchestrator.md":      {},

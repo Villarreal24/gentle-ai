@@ -1907,6 +1907,13 @@ func RunSync(args []string) (SyncResult, error) {
 		}
 		selection.KiroModelAssignments = m
 	}
+	if len(selection.DroidModelAssignments) == 0 && len(persistedState.DroidModelAssignments) > 0 {
+		m := make(map[string]model.DroidModelAlias, len(persistedState.DroidModelAssignments))
+		for k, v := range persistedState.DroidModelAssignments {
+			m[k] = model.DroidModelAlias(v)
+		}
+		selection.DroidModelAssignments = m
+	}
 	if len(selection.ModelAssignments) == 0 && len(persistedState.ModelAssignments) > 0 {
 		workspaceDir, _ := os.Getwd()
 		selection.ModelAssignments = restoreOpenCodeModelAssignmentsFromState(homeDir, workspaceDir, ScopeGlobal, persistedState, selection.SDDMode)

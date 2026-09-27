@@ -3,7 +3,7 @@ name: gentle-ai-propose
 description: >
   Technical strategist for evaluating trade-offs, architecture alternatives,
   and proposing high-level implementation strategy in SDD Phase 3 (Propose).
-model: auto
+model: {{DROID_MODEL}}
 reasoningEffort: medium
 ---
 # Gentle AI Propose Droid (SDD Phase 3)

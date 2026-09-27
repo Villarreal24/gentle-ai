@@ -57,6 +57,7 @@ func TestManagedDirectReplyAssetsEnforceEnglishNoCodeSwitching(t *testing.T) {
 		{name: "kimi neutral output style", path: "kimi/output-style-neutral.md"},
 		{name: "kimi gentleman persona", path: "kimi/persona-gentleman.md", combineWith: "kimi/output-style-gentleman.md"},
 		{name: "opencode gentleman persona", path: "opencode/persona-gentleman.md"},
+		{name: "droid gentleman persona", path: "droid/persona-gentleman.md"},
 	}
 
 	for _, tc := range tests {
@@ -76,8 +77,8 @@ func TestManagedDirectReplyAssetsEnforceEnglishNoCodeSwitching(t *testing.T) {
 
 func TestODDOrchestratorAssetsEnforceLanguageContract(t *testing.T) {
 	assetPaths := allSDDOrchestratorAssetPaths(t)
-	if len(assetPaths) != 12 {
-		t.Fatalf("ODD orchestrator asset count = %d, want 12", len(assetPaths))
+	if len(assetPaths) != 13 {
+		t.Fatalf("ODD orchestrator asset count = %d, want 13", len(assetPaths))
 	}
 
 	for _, path := range assetPaths {
@@ -225,6 +226,7 @@ func TestGentlemanPersonaKeepsDirectConversationVoice(t *testing.T) {
 		{path: "kiro/persona-gentleman.md"},
 		{path: "kimi/persona-gentleman.md", combineWith: "kimi/output-style-gentleman.md"},
 		{path: "opencode/persona-gentleman.md"},
+		{path: "droid/persona-gentleman.md"},
 	}
 	for _, tc := range tests {
 		t.Run(tc.path, func(t *testing.T) {
@@ -372,6 +374,7 @@ func TestPersonaChannelsCarryPreWriteArtifactSelfCheck(t *testing.T) {
 		"hermes/persona-neutral.md",
 		"kiro/persona-gentleman.md",
 		"opencode/persona-gentleman.md",
+		"droid/persona-gentleman.md",
 	}
 	for _, path := range paths {
 		t.Run(path, func(t *testing.T) {

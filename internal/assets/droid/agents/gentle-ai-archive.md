@@ -3,7 +3,7 @@ name: gentle-ai-archive
 description: >
   Release context manager for finalizing work-unit commits, cleaning temporary
   state, and recording delivery evidence in SDD Phase 9 (Archive).
-model: auto
+model: {{DROID_MODEL}}
 reasoningEffort: none
 ---
 # Gentle AI Archive Droid (SDD Phase 9)

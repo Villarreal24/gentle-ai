@@ -141,6 +141,8 @@ func orchestratorAsset(agent model.AgentID) string {
 		return "hermes/orchestrator.md"
 	case model.AgentOpenCode, model.AgentKilocode:
 		return "opencode/orchestrator.md"
+	case model.AgentDroid:
+		return "droid/orchestrator.md"
 	default:
 		return "generic/orchestrator.md"
 	}

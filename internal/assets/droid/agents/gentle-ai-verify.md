@@ -1,7 +1,7 @@
 ---
 name: gentle-ai-verify
 description: Technical verifier droid for executing tests, lints, and builds in Gentle-AI SDD / ODD
-model: auto
+model: {{DROID_MODEL}}
 reasoningEffort: low
 ---
 # Gentle AI Verifier Droid

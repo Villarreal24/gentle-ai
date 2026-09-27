@@ -63,7 +63,8 @@ func TestNativeAgentManifestShipsReviewAgentsOnlyToRDDRuntimes(t *testing.T) {
 		"gentle-ai-apply.md", "gentle-ai-archive.md", "gentle-ai-design.md",
 		"gentle-ai-explore.md", "gentle-ai-init.md", "gentle-ai-propose.md",
 		"gentle-ai-spec.md", "gentle-ai-tasks.md", "gentle-ai-verify.md",
-		"gentle-ai-worker.md", "jd-fix-agent.md", "jd-judge-a.md", "jd-judge-b.md",
+		"gentle-ai-worker.md", "gentle-orchestrator.md", "jd-fix-agent.md",
+		"jd-judge-a.md", "jd-judge-b.md",
 	} {
 		if !containsName(NativeAgentManifest[model.AgentDroid], want) {
 			t.Errorf("Droid lost sub-agent %s", want)

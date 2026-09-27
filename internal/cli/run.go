@@ -306,6 +306,7 @@ func RunInstall(args []string, detection system.DetectionResult) (InstallResult,
 		ClaudeModelAssignments:      claudeLegacyAssignmentsForState(input.Selection.ClaudeModelAssignments, claudePhaseState),
 		ClaudePhaseAssignments:      claudePhaseState,
 		KiroModelAssignments:        kiroAliasesToStrings(input.Selection.KiroModelAssignments),
+		DroidModelAssignments:       droidAliasesToStrings(input.Selection.DroidModelAssignments),
 		CodexModelAssignments:       codexEffortsToStrings(input.Selection.CodexModelAssignments),
 		CodexOrchestratorAssignment: codexOrchestratorToState(input.Selection.CodexOrchestratorAssignment),
 		CodexCarrilModelAssignments: input.Selection.CodexCarrilModelAssignments,
@@ -372,6 +373,7 @@ func mergeFullInstallState(existing, fresh state.InstallState) state.InstallStat
 	merged.CommunityTools, merged.CommunityToolsConfigured = fresh.CommunityTools, fresh.CommunityToolsConfigured
 	merged.ClaudeModelAssignments, merged.ClaudePhaseAssignments = fresh.ClaudeModelAssignments, fresh.ClaudePhaseAssignments
 	merged.KiroModelAssignments, merged.CodexModelAssignments = fresh.KiroModelAssignments, fresh.CodexModelAssignments
+	merged.DroidModelAssignments = fresh.DroidModelAssignments
 	merged.CodexOrchestratorAssignment = fresh.CodexOrchestratorAssignment
 	merged.CodexCarrilModelAssignments, merged.CodexPhaseModelAssignments = fresh.CodexCarrilModelAssignments, fresh.CodexPhaseModelAssignments
 	merged.ModelAssignments, merged.Persona = fresh.ModelAssignments, fresh.Persona
@@ -419,6 +421,9 @@ func mergeExplicitAgentInstallState(homeDir string, newState state.InstallState,
 	}
 	if newState.KiroModelAssignments != nil {
 		merged.KiroModelAssignments = newState.KiroModelAssignments
+	}
+	if newState.DroidModelAssignments != nil {
+		merged.DroidModelAssignments = newState.DroidModelAssignments
 	}
 	if newState.CodexOrchestratorAssignment != nil {
 		merged.CodexOrchestratorAssignment = newState.CodexOrchestratorAssignment
@@ -926,6 +931,7 @@ func (s nativeReviewAgentStep) Run() error {
 		ClaudeModelAssignments:    s.selection.ClaudeModelAssignments,
 		ClaudePhaseAssignments:    s.selection.ClaudePhaseAssignments,
 		KiroModelAssignments:      s.selection.KiroModelAssignments,
+		DroidModelAssignments:     s.selection.DroidModelAssignments,
 		CodeGraphGuidanceMarkdown: nativeReviewCodeGraphGuidanceMarkdown(s.homeDir, s.selection.CommunityTools),
 	})
 	if err != nil {
@@ -3639,6 +3645,19 @@ func claudePhaseAssignmentsToState(m map[string]model.ClaudePhaseAssignment) map
 // kiroAliasesToStrings converts a typed KiroModelAlias map to plain strings
 // for JSON serialisation in state.json.
 func kiroAliasesToStrings(m map[string]model.KiroModelAlias) map[string]string {
+	if len(m) == 0 {
+		return nil
+	}
+	out := make(map[string]string, len(m))
+	for k, v := range m {
+		out[k] = string(v)
+	}
+	return out
+}
+
+// droidAliasesToStrings converts a typed DroidModelAlias map to plain strings
+// for JSON serialisation in state.json.
+func droidAliasesToStrings(m map[string]model.DroidModelAlias) map[string]string {
 	if len(m) == 0 {
 		return nil
 	}
