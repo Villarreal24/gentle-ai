@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/gentleman-programming/gentle-ai/v3/internal/agents"
 	"github.com/gentleman-programming/gentle-ai/v3/internal/assets"
@@ -76,7 +77,11 @@ func InstallNativeCommands(home string, adapter agents.Adapter) (InstallResult, 
 
 	rendered := make(map[string]string, len(names))
 	for _, name := range names {
-		path := fmt.Sprintf("%s/commands/%s", adapter.Agent(), name)
+		sourceName := name
+		if strings.HasPrefix(name, "gentle-sdd-") {
+			sourceName = "gentle-" + strings.TrimPrefix(name, "gentle-sdd-")
+		}
+		path := fmt.Sprintf("%s/commands/%s", adapter.Agent(), sourceName)
 		source, err := assets.Read(path)
 		if err != nil {
 			return InstallResult{}, fmt.Errorf("read native command %s: %w", path, err)

@@ -85,6 +85,14 @@ Route work through Factory Droid's native sub-droids:
 - Commits and task archiving: `@gentle-ai-archive`
 - Adversarial reviews: Judgment Day adversarial judges (`@jd-judge-a`, `@jd-judge-b`) and fix agent
 
+#### Factory Droid Spec Mode Awareness
+When Factory Droid is started with `--use-spec` or cycled into Spec Mode, tools that modify files (`Create`, `Edit`) are disabled by runtime:
+1. Coordinate Phases 1 through 5 (`Init`, `Explore`, `Propose`, `Spec`, `Design`) in read-only planning mode.
+2. Synthesize the complete architectural specification using Mermaid diagrams where clarity is improved.
+3. Call the native `ExitSpecMode` tool to present the plan for user approval via Droid's interactive modal.
+4. After approval (which exits Spec Mode), proceed with Phase 6 (`Tasks`, writing `odd/tasks/<feature>.md`) and Phase 7 (`Apply`).
+In Normal Mode (default), coordinate the phases directly with conversational confirmation gates.
+
 Keep one writer and a short synthesized handoff. Delegation is mandatory at the mapping, write, preparation, and broad-research boundaries, but it remains a direct implementation route.
 
 #### Mandatory Delegation Triggers
