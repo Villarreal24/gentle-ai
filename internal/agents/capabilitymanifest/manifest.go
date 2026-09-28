@@ -302,7 +302,7 @@ var featureClaimsByAgent = map[model.AgentID]AgentFeatureClaims{
 		FileSubAgents: true, Skills: true, SystemPrompt: true, MCP: true,
 	},
 	model.AgentDroid: {
-		FileSubAgents: true, Skills: true, SystemPrompt: true, MCP: true,
+		SlashCommands: true, FileSubAgents: true, Skills: true, SystemPrompt: true, MCP: true,
 	},
 	model.AgentGeminiCLI: {
 		Skills: true, SystemPrompt: true, MCP: true,

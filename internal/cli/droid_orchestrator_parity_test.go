@@ -95,6 +95,31 @@ func TestDroidOrchestratorInstallAndSyncParity(t *testing.T) {
 			t.Errorf("sub-droid %s missing: %v", sub, err)
 		}
 	}
+
+	// 4. Verify slash commands exist in ~/.factory/commands/
+	commandsDir := adapter.CommandsDir(home)
+	for _, cmd := range []string{
+		"gentle-sdd-new.md", "gentle-new.md",
+		"gentle-sdd-init.md", "gentle-init.md",
+		"gentle-sdd-apply.md", "gentle-apply.md",
+		"gentle-orchestrator.md",
+		"gentle-judge.md",
+		"gentle-status.md",
+	} {
+		cmdPath := filepath.Join(commandsDir, cmd)
+		raw, err := os.ReadFile(cmdPath)
+		if err != nil {
+			t.Errorf("command %s missing: %v", cmd, err)
+			continue
+		}
+		cmdContent := string(raw)
+		if !strings.Contains(cmdContent, "description:") {
+			t.Errorf("command %s missing frontmatter description", cmd)
+		}
+		if !strings.Contains(cmdContent, "$ARGUMENTS") {
+			t.Errorf("command %s missing $ARGUMENTS placeholder", cmd)
+		}
+	}
 }
 
 func TestDroidModelAssignmentsSubstitutionAndPersistence(t *testing.T) {

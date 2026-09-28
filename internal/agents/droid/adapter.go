@@ -139,8 +139,8 @@ func (a *Adapter) SupportsSlashCommands() bool {
 	return a.CapabilityManifest().Features.SlashCommands
 }
 
-func (a *Adapter) CommandsDir(_ string) string {
-	return ""
+func (a *Adapter) CommandsDir(homeDir string) string {
+	return filepath.Join(ConfigPath(homeDir), "commands")
 }
 
 func (a *Adapter) SupportsSubAgents() bool {

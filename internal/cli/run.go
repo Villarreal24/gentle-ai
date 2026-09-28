@@ -945,6 +945,20 @@ func (s nativeReviewAgentStep) Run() error {
 			s.state.nativeReviewActions = append(s.state.nativeReviewActions, nativeReviewPreservedAction(path))
 		}
 	}
+	if reviewassets.NativeCommandsSupported(adapter.Agent()) {
+		cmdRes, cmdErr := reviewassets.InstallNativeCommands(target, adapter)
+		if cmdErr != nil {
+			return fmt.Errorf("install native commands for %q: %w", s.agent, cmdErr)
+		}
+		if s.changedFiles != nil {
+			*s.changedFiles = append(*s.changedFiles, cmdRes.Files...)
+		}
+		if s.state != nil {
+			for _, path := range cmdRes.Skipped {
+				s.state.nativeReviewActions = append(s.state.nativeReviewActions, nativeReviewPreservedAction(path))
+			}
+		}
+	}
 	return nil
 }
 
@@ -2748,6 +2762,13 @@ func backupTargets(homeDir, workspaceDir string, scope InstallScope, selection m
 		if names := reviewassets.NativeAgentFileNames(adapter.Agent()); len(names) > 0 {
 			dir := adapter.SubAgentsDir(componentInjectionDirScoped(homeDir, workspaceDir, scope, adapter))
 			paths[filepath.Join(dir, reviewassets.OwnershipLedgerFilename)] = struct{}{}
+			for _, name := range names {
+				paths[filepath.Join(dir, name)] = struct{}{}
+			}
+		}
+		if names := reviewassets.NativeCommandFileNames(adapter.Agent()); len(names) > 0 {
+			dir := adapter.CommandsDir(componentInjectionDirScoped(homeDir, workspaceDir, scope, adapter))
+			paths[filepath.Join(dir, reviewassets.OwnershipCommandsLedgerFilename)] = struct{}{}
 			for _, name := range names {
 				paths[filepath.Join(dir, name)] = struct{}{}
 			}

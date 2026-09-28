@@ -608,6 +608,13 @@ func syncBackupTargets(homeDir, workspaceDir string, selection model.Selection, 
 				paths[filepath.Join(dir, name)] = struct{}{}
 			}
 		}
+		if names := reviewassets.NativeCommandFileNames(adapter.Agent()); len(names) > 0 {
+			dir := adapter.CommandsDir(componentInjectionDirScoped(homeDir, workspaceDir, ScopeGlobal, adapter))
+			paths[filepath.Join(dir, reviewassets.OwnershipCommandsLedgerFilename)] = struct{}{}
+			for _, name := range names {
+				paths[filepath.Join(dir, name)] = struct{}{}
+			}
+		}
 		if adapter.Agent() == model.AgentPi {
 			paths[adapter.SystemPromptFile(homeDir)] = struct{}{}
 		}

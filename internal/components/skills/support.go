@@ -120,7 +120,7 @@ func AllSkillCommandPaths(homeDir string, adapter agents.Adapter) ([]string, err
 }
 
 func skillCommands(homeDir string, adapter agents.Adapter, skillIDs []model.SkillID) ([]directoryAsset, error) {
-	if !adapter.SupportsSlashCommands() || adapter.Agent() == model.AgentClaudeCode {
+	if !adapter.SupportsSlashCommands() || adapter.Agent() == model.AgentClaudeCode || adapter.Agent() == model.AgentDroid {
 		return nil, nil
 	}
 	commandsDir := adapter.CommandsDir(homeDir)

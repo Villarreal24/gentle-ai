@@ -176,12 +176,12 @@ func TestCapabilities(t *testing.T) {
 		t.Fatalf("OutputStyleDir() = %q, want empty", got)
 	}
 
-	if a.SupportsSlashCommands() {
-		t.Fatalf("SupportsSlashCommands() = true, want false")
+	if !a.SupportsSlashCommands() {
+		t.Fatalf("SupportsSlashCommands() = false, want true")
 	}
 
-	if got := a.CommandsDir("/home/test"); got != "" {
-		t.Fatalf("CommandsDir() = %q, want empty", got)
+	if got := a.CommandsDir("/home/test"); got != filepath.Join("/home/test", ".factory", "commands") {
+		t.Fatalf("CommandsDir() = %q, want ~/.factory/commands", got)
 	}
 
 	if !a.SupportsSubAgents() {
