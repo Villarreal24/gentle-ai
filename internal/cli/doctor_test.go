@@ -1197,6 +1197,23 @@ func TestCheckToolBinaries_DerivesAgentsFromInstalled(t *testing.T) {
 	if !claudeFailed {
 		t.Errorf("expected tool:claude to fail when claude-code is installed but binary is missing; got %+v", results)
 	}
+
+	lookPathFn = func(name string) (string, error) {
+		if name == "droid" {
+			return "/usr/local/bin/droid", nil
+		}
+		return "", errors.New("not found")
+	}
+	droidResults := checkToolBinaries([]string{"/usr/local/bin"}, []string{"droid"})
+	var droidPassed bool
+	for _, r := range droidResults {
+		if r.Name == "tool:droid" && r.Status == CheckStatusPass {
+			droidPassed = true
+		}
+	}
+	if !droidPassed {
+		t.Errorf("expected tool:droid to pass when droid is installed; got %+v", droidResults)
+	}
 }
 
 // TestCheckToolBinaries_AgentNotInState_NotReported verifies that agents NOT

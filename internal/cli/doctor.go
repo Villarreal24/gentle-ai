@@ -57,6 +57,7 @@ var agentToolBinaries = map[string]string{
 	"vscode-copilot": "code",
 	"openclaw":       "openclaw",
 	"hermes":         "hermes",
+	"droid":          "droid",
 }
 
 const (
