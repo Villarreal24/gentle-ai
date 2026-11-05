@@ -70,14 +70,26 @@ the Factory Droid integration or the locally installed fork binary.
     separately outside the repository with mode `0600`; its contents were not
     read. Temporary branch `update/gentle-ai-v4.3.1` is based on the original
     feature head.
-  - Work-unit commit: `7843d964` (`docs(odd): track Gentle-AI v4.3.1 update`).
+  - Work-unit commit: `7843d964` (`docs(odd): track Gentle-AI v4.3.1 update`);
+    completion-evidence commit: `13b82a4e`.
 
-- [ ] **T2. Integrate the official v4.3.1 tag.**
-  - Route: delegated implementation by one writer; the six-commit adapter
-    footprint spans 76 files. Do not parallelize writers.
+- [in_progress] **T2. Integrate the official v4.3.1 tag.**
+  - Route: delegated implementation by `gentle-ai-apply`; the six-commit
+    adapter footprint spans 76 files, and the upstream release changes 1,845
+    paths. Do not parallelize writers.
   - Refresh `origin` and `upstream`, verify the tag and its official source,
     then merge it into the temporary branch based on the original feature
     branch. Preserve all six fork commits.
+  - Tag verification: annotated tag object
+    `ee20d2dded25c8e1f1071f92ff73f1e357f36071` points to commit
+    `2dba7784114fff57864519c4c0d067e952a8c98b`. Both object IDs match
+    `git ls-remote upstream`; the tag is unsigned (verification reported no
+    signature found). The original shared base is an ancestor and the tag adds
+    exactly 859 commits. Fetched `upstream/main` has 200 commits after the tag;
+    none are in scope. `origin/feat/factory-droid-adapter` remains at
+    `29ec8b82`.
+  - The original feature branch to tag tree diff is 1,845 paths
+    (`+163,023/-13,047`), all imported upstream changes for this release.
   - Apply test-first regression fixes only where a concrete behavior
     incompatibility is observed. Stop and ask if the adapter needs redesign.
   - Commit the release merge and any focused compatibility fix as reviewable
@@ -160,12 +172,14 @@ ask once about the chain strategy before committing.
 - Route: delegated read-only mapping to `gentle-ai-explore` (completed). It
   mapped the six commits to a 76-file footprint and found that `--agents droid`
   is not an asset-only sync fence.
-- T1 closed by `7843d964`: binary, Git tag, managed-asset backups, private MCP
-  backup, temporary branch, and task record are verified.
-- No remote fetch/push, source changes, tests, builds, binary replacement, or
-  sync have been performed yet.
+- T1 closed by `7843d964` and completion evidence recorded in `13b82a4e`:
+  binary, Git tag, managed-asset backups, private MCP backup, temporary branch,
+  and task record are verified.
+- `origin` and `upstream` refs were fetched and the official v4.3.1 tag was
+  verified. No merge, source changes, tests, builds, binary replacement, sync,
+  or push have been performed yet.
 
 ## Next Step
 
-Fetch `origin` and `upstream`, verify the official v4.3.1 tag, and then start
-the merge on `update/gentle-ai-v4.3.1`.
+Delegate the v4.3.1 merge to one writer on `update/gentle-ai-v4.3.1`; stop if a
+conflict requires redesigning the Factory Droid adapter.
