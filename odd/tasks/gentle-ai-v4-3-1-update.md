@@ -70,7 +70,7 @@ the Factory Droid integration or the locally installed fork binary.
     separately outside the repository with mode `0600`; its contents were not
     read. Temporary branch `update/gentle-ai-v4.3.1` is based on the original
     feature head.
-  - Commit: task-record work-unit commit pending.
+  - Work-unit commit: `7843d964` (`docs(odd): track Gentle-AI v4.3.1 update`).
 
 - [ ] **T2. Integrate the official v4.3.1 tag.**
   - Route: delegated implementation by one writer; the six-commit adapter
@@ -160,12 +160,12 @@ ask once about the chain strategy before committing.
 - Route: delegated read-only mapping to `gentle-ai-explore` (completed). It
   mapped the six commits to a 76-file footprint and found that `--agents droid`
   is not an asset-only sync fence.
-- T1 recovery checkpoint: binary, Git tag, managed-asset backups, private MCP
-  backup, and temporary branch verified; the task-record commit is next.
+- T1 closed by `7843d964`: binary, Git tag, managed-asset backups, private MCP
+  backup, temporary branch, and task record are verified.
 - No remote fetch/push, source changes, tests, builds, binary replacement, or
   sync have been performed yet.
 
 ## Next Step
 
-Commit this task record on `update/gentle-ai-v4.3.1`, then fetch and verify the
-official release before changing source.
+Fetch `origin` and `upstream`, verify the official v4.3.1 tag, and then start
+the merge on `update/gentle-ai-v4.3.1`.
