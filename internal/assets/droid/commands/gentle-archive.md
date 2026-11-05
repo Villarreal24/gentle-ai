@@ -1,5 +1,5 @@
 ---
-description: Run SDD Phase 9 (Archive) to finalize task checklists and commit changes
+description: Use the ODD Archive role to finalize task checklists and commit changes
 ---
 @gentle-ai-archive
 

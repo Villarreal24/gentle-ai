@@ -1,5 +1,5 @@
 ---
-description: Run SDD Phase 4 (Spec) to define executable BDD / Gherkin specifications
+description: Use the ODD Spec role to define executable BDD / Gherkin specifications
 ---
 @gentle-ai-spec
 

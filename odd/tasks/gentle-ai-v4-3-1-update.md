@@ -23,8 +23,10 @@ the Factory Droid integration or the locally installed fork binary.
 - Preserve the existing feature branch and establish local recovery points.
 - Verify the official `v4.3.1` tag, then merge it into a temporary branch based
   on the current feature branch. Do not reset, rebase, or discard fork commits.
-- Resolve only straightforward compatibility issues. Stop for user input if
-  integration requires redesigning the Factory Droid adapter.
+- Resolve the v4.3.1 conflicts while preserving both sides. On 2026-11-05, the
+  user authorized a minimal v4 Droid migration: update module imports, Droid
+  prompt/agent assets, routing hashes and related tests, and the README agent
+  badge. Stop if unrelated failures or broader design changes are required.
 - Run focused Go tests, build and inspect a temporary binary, and independently
   review the merge and local configuration effects.
 - Replace `~/bin/gentle-ai` only after verification.
@@ -40,6 +42,11 @@ the Factory Droid integration or the locally installed fork binary.
 - Work only in this Gentle-AI checkout and its explicitly authorized local
   installation paths. Do not modify `cars_platform`.
 - Do not integrate commits after the official v4.3.1 tag.
+- Keep the user-approved Droid migration limited to the v4 module path, Droid
+  guidance/assets, routing golden/hash, README badge, and tests directly related
+  to those changes. Stop before addressing unrelated CLI failures. The user
+  authorized skipping only `TestRenderedGuidanceHasNoRetiredWorkflowReferences/codex`
+  because the `codex` executable is unavailable; do not install or configure it.
 - Do not run `gentle-ai upgrade`, update the Engram binary, run Engram setup, or
   write directly to Engram's database.
 - Regenerating the Engram integration is authorized; do not copy credentials
@@ -73,10 +80,11 @@ the Factory Droid integration or the locally installed fork binary.
   - Work-unit commit: `7843d964` (`docs(odd): track Gentle-AI v4.3.1 update`);
     completion-evidence commit: `13b82a4e`.
 
-- [in_progress] **T2. Integrate the official v4.3.1 tag.**
-  - Route: delegated implementation by `gentle-ai-apply`; the six-commit
-    adapter footprint spans 76 files, and the upstream release changes 1,845
-    paths. Do not parallelize writers.
+- [x] **T2. Integrate the official v4.3.1 tag.**
+  - Route: conflict mapping and resolution delegated to `gentle-ai-apply`;
+    parent performs and commits the Git merge because that writer cannot commit.
+    The six-commit adapter footprint spans 76 files, and the upstream release
+    changes 1,845 paths. Do not parallelize writers.
   - Refresh `origin` and `upstream`, verify the tag and its official source,
     then merge it into the temporary branch based on the original feature
     branch. Preserve all six fork commits.
@@ -90,12 +98,39 @@ the Factory Droid integration or the locally installed fork binary.
     `29ec8b82`.
   - The original feature branch to tag tree diff is 1,845 paths
     (`+163,023/-13,047`), all imported upstream changes for this release.
-  - Apply test-first regression fixes only where a concrete behavior
-    incompatibility is observed. Stop and ask if the adapter needs redesign.
-  - Commit the release merge and any focused compatibility fix as reviewable
-    work units. Record their IDs and authored line counts below.
+  - The Git merge found 17 content conflicts; all 17 were resolved and staged
+    by `gentle-ai-apply`. No unresolved paths remain, but the merge is not
+    committed.
+  - The authorized migration changed the 19 `/v3` imports in seven Droid files
+    to `/v4`, updated 23 Droid assets, the README badge, and the routing digest.
+    The Droid digest is
+    `0208d789909c092b32c94e97bbbefd2785ca44147d3ee4a77cc6de8640a7a29a`;
+    the Pi routing fixture remained byte-identical (SHA-256
+    `aa459a16017fc6a507cf4d87783068782ba6250fac05c5eed57a35f47a9caca6`).
+  - Focused routing, guidance, embedded-asset, README badge, Droid adapter,
+    native command installation, TUI picker, and CLI Droid parity/model
+    persistence checks passed. The only authorized skip was
+    `TestRenderedGuidanceHasNoRetiredWorkflowReferences/codex`, because
+    `codex --version` exits 127 (`codex not found in PATH`).
+  - `git diff --check` passed for the new migration changes. The parent
+    `git diff --cached --check` found whitespace in imported v4.3.1 content:
+    `README.md:46`, `internal/tui/styles/rose_frames.txt`, and
+    `odd/tasks/opencode-settings-writer-gaps.md`. The latter two index blobs
+    match the release tag exactly, and the README line also has trailing
+    whitespace in the tag. No unrelated upstream whitespace was changed.
+  - No prompt tests were weakened; the routing golden was regenerated only via
+    the existing `-update` path. The merge remains uncommitted.
+  - The user authorized the bounded Droid v4 migration listed above. Use
+    applicable test-first checks; stop before fixing unrelated failures.
+  - Independent verification passed: all six fork commits remain ancestors,
+    only the approved 32 migration paths were changed beyond the imported
+    release tree, and no actionable migration defect was found. The verifier
+    also confirmed that real global sync may affect additional components;
+    inspect dry-run and ask before applying any out-of-scope effect.
+  - Work-unit merge commit: pending execution after staged-diff review; record
+    its identity in the next task-record update.
 
-- [ ] **T3. Verify the merge and build before installation.**
+- [x] **T3. Verify the merge and build before installation.**
   - Route: writer self-verification plus an independent read-only verifier;
     risk is high because the change affects the CLI, persisted model
     preferences, and local sync behavior.
@@ -104,6 +139,22 @@ the Factory Droid integration or the locally installed fork binary.
     against the six fork commits and assess local config effects.
   - Do not install or sync if required checks fail or the independent review
     finds an unresolved high-impact issue.
+  - Evidence: all T2-focused commands passed except the user-authorized Codex
+    subtest; the parent reran the routing golden test successfully. The
+    independent verifier found no in-scope defect and confirmed all six fork
+    commits remain ancestors.
+  - Temporary build command:
+
+    ```sh
+    CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -X main.version=4.3.1-villarreal24.1" -o /tmp/gentle-ai-v4.3.1-factory-droid-merge-check-0ee790351 ./cmd/gentle-ai
+    ```
+
+    It passed with Go `1.26.6` on `darwin/arm64` (the repo declares Go
+    `1.25.10`).
+    The binary reports `gentle-ai 4.3.1-villarreal24.1`; `--help` and
+    `sync --help` both passed. `MINISIGN_PUBLIC_KEYS_CANONICAL` was unavailable,
+    so this temporary binary keeps the updater's fail-closed default. It has
+    not been installed.
 
 - [ ] **T4. Install and synchronize within the authorized scope.**
   - Route: bounded local operation after validation; risk is high because sync
@@ -113,6 +164,10 @@ the Factory Droid integration or the locally installed fork binary.
     reports components and step counts, not a per-file diff. A normal sync can
     refresh Persona, Engram, Context7, GGA, Skills, shared skills, and
     persisted CodeGraph wiring even when `--agents droid` is specified.
+  - Independent v4 source review confirmed that selecting `droid` does not
+    fence those global stages. `--scope workspace` skips global `~/.factory`
+    assets and cannot satisfy this task. Do not run real sync until the dry-run
+    shows an authorized component set or the user approves additional effects.
   - Proceed only if the effective actions stay within the approved Droid
     assets and Engram integration. If unrelated tools/configuration would be
     refreshed, stop and ask before applying sync.
@@ -132,8 +187,11 @@ the Factory Droid integration or the locally installed fork binary.
 
 - The verified official `v4.3.1` tag is in the updated branch history, and all
   six Factory Droid commits remain represented without reset or rebase.
-- Focused tests pass; the temporary binary reports the expected fork version
-  and exposes the expected commands.
+- Focused tests pass except the user-authorized, reported Codex-dependent
+  subtest; the temporary binary reports the expected fork version and exposes
+  the expected commands.
+- The Droid integration's module imports, prompts/assets, routing hashes, and
+  related tests comply with the v4.3.1 contracts.
 - The installed binary matches the verified temporary build.
 - Any sync stays within the approved local assets and preserves user files and
   preferences; it does not update the Engram binary/setup/database or unrelated
@@ -144,21 +202,41 @@ the Factory Droid integration or the locally installed fork binary.
 
 ## Verification
 
-Candidate focused checks from the current tree; adjust only if v4.3.1 changes
-package boundaries:
+T2 focused migration checks passed, except the user-authorized Codex subtest:
 
 ```sh
-go test ./internal/agents/droid ./internal/model ./internal/components/reviewassets
-go test ./internal/cli -run 'TestDroid|TestRunSyncDryRunDoesNotWriteFiles|TestNativeReviewSyncPreservesUnknownAndSnapshotsLedger'
-go test ./internal/tui/... -run 'Droid|ModelConfig|Navigation'
-go test ./internal/assets ./internal/components/agentguidance ./internal/components/persona ./internal/components/skills ./internal/state ./internal/system ./internal/catalog ./internal/agents
-go test ./internal/cli -run 'Doctor|ToolBinaries'
+go test ./internal/components/agentguidance -run '^TestRenderRoutingMatchesGoldens$' -update
+go test ./internal/components/agentguidance -run '^TestRenderRoutingMatchesGoldens$' -count=1
+go test ./internal/components/agentguidance -run '^(TestInstalledEvidenceBudgetGuidance|TestInstalledOrchestratorDelegatesForReason|TestVerifierRunsOnlyForANamedHighRiskItem|TestInstalledPromptCarriesRDDOnlyOnRDDRuntimes|TestRenderedGuidanceHasNoRetiredWorkflowReferences)$' -skip 'TestRenderedGuidanceHasNoRetiredWorkflowReferences/codex$' -count=1
+go test ./internal/assets -run '^(TestEmbeddedAssetsHaveNoRetiredWorkflowReferences|TestOrchestratorsDelegateOnlyWhenATriggerTrulyHolds|TestOrchestratorsProjectOrganicRouting|TestOrchestratorSectionDriftDoesNotGrow)$' -count=1
+go test ./internal/catalog -run '^TestReadmeAgentsBadgeMatchesCatalog$' -count=1
+go test ./internal/agents/droid -count=1
+go test ./internal/components/reviewassets -run '^(TestNativeCommandsSupported|TestInstallNativeCommands_Droid)$' -count=1
+go test ./internal/tui/screens -run Droid -count=1
+go test ./internal/cli -run '^TestDroid(OrchestratorInstallAndSyncParity|ModelAssignmentsSubstitutionAndPersistence)$' -count=1 -timeout=3m
 ```
 
-Build the temporary binary with the repository's Go version and release
-linker settings, then check `--version` and `sync --help`. Before real sync,
-review its dry-run output and confirm the resulting config effects are within
-the authorization above.
+`git diff --cached --check` is not clean because the imported v4.3.1 tag
+contains whitespace in the files recorded under T2. No unrelated upstream
+whitespace was changed. The T3 temporary build, command checks, and independent
+review passed; the recorded Codex-dependent subtest remains the only authorized
+skip.
+
+## Deferred Checks
+
+- `go test ./...` and the broad `internal/cli` suite were not run for the final
+  migration. The broad CLI suite timed out after 10 minutes in an earlier
+  disposable pre-migration copy with failures not attributed to this change;
+  focused Droid CLI tests passed.
+- The repository-declared Go version is `1.25.10`; the available compiler was
+  Go `1.26.6`. The temporary build passed on that newer compiler.
+- Real sync remains pending review of its dry-run. The v4 sync can touch global
+  components beyond Droid and Engram; do not run it until the effective scope
+  is authorized.
+
+`TestRenderedGuidanceHasNoRetiredWorkflowReferences/codex` is an authorized
+environmental skip because `codex` is not available in `PATH`. Do not install
+or configure another tool to satisfy it.
 
 ## Delivery Strategy
 
@@ -176,10 +254,22 @@ ask once about the chain strategy before committing.
   binary, Git tag, managed-asset backups, private MCP backup, temporary branch,
   and task record are verified.
 - `origin` and `upstream` refs were fetched and the official v4.3.1 tag was
-  verified. No merge, source changes, tests, builds, binary replacement, sync,
-  or push have been performed yet.
+  verified. The merge is in progress with all 17 conflicts resolved and staged;
+  no merge commit, binary replacement, sync, or push has been performed.
+- User approved a minimal Droid v4 migration: update the seven stale `/v3`
+  imports, Droid guidance/assets, routing hash/test expectations, README agent
+  badge, and directly related tests. Unrelated CLI failures remain out of scope.
+- The migration changed the 19 imports, 23 Droid assets, README badge,
+  parity expectations, and routing digest; those authorized paths are staged.
+  The ODD task file remains unstaged. Focused checks passed except the
+  user-authorized Codex-dependent subtest; the independent review and temporary
+  build passed. The merge remains uncommitted.
+- The temporary build used Go 1.26.6, not the repository-declared Go 1.25.10;
+  no release trust-anchor variable was available, so the temp binary's updater
+  remains fail-closed. It has not replaced the active binary.
 
 ## Next Step
 
-Delegate the v4.3.1 merge to one writer on `update/gentle-ai-v4.3.1`; stop if a
-conflict requires redesigning the Factory Droid adapter.
+Create the verified merge commit, then install the temporary binary and inspect
+`sync --dry-run`; pause before real sync if it would refresh out-of-scope
+components.

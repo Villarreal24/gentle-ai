@@ -1,5 +1,5 @@
 ---
-description: Run SDD Phase 2 (Explore) for read-only codebase mapping and context gathering
+description: Use the ODD Explore role for read-only codebase mapping and context gathering
 ---
 @gentle-ai-explore
 

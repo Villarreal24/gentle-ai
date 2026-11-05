@@ -1,9 +1,9 @@
 ---
-description: Start a new SDD feature lifecycle via the Master Gentle Orchestrator
+description: Start a new ODD feature lifecycle via the Master Gentle Orchestrator
 ---
 @gentle-orchestrator
 
-Please start a new Spec-Driven Development (SDD) feature lifecycle for the following objective:
+Please start a new Organic Driven Development (ODD) feature lifecycle for the following objective:
 $ARGUMENTS
 
-Coordinate the SDD phases starting with Phase 1 (Init) and proceed according to the Gentle-AI protocol. If running in Factory Droid's Spec Mode, coordinate Phases 1-5 and call ExitSpecMode when the specification is ready for review.
+Follow ODD proportionately: authorize, explore, resolve uncertainty, classify, track substantial work, implement, and verify. Specialized roles are available as needed, not mandatory phases. If running in Factory Droid's Spec Mode, stay read-only and call ExitSpecMode when the implementation plan is ready for review.

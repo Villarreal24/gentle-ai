@@ -1,7 +1,7 @@
 ---
-description: Run SDD Phase 7 (Apply) to implement changes with Strict TDD (RED -> GREEN)
+description: Use the ODD Apply role to implement changes with the applicable test-first policy
 ---
 @gentle-ai-apply
 
-Implement the specified task using Strict Test-Driven Development (RED -> GREEN) within allowed edit surfaces:
+Implement the specified task using the applicable test-first policy and runner (observed RED -> GREEN -> REFACTOR when applicable) within allowed edit surfaces:
 $ARGUMENTS

@@ -1,5 +1,5 @@
 ---
-description: Run SDD Phase 3 (Propose) to formulate implementation strategies and trade-offs
+description: Use the ODD Propose role to formulate implementation strategies and trade-offs
 ---
 @gentle-ai-propose
 

@@ -5,7 +5,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/gentleman-programming/gentle-ai/v3/internal/model"
+	"github.com/gentleman-programming/gentle-ai/v4/internal/model"
+	"github.com/gentleman-programming/gentle-ai/v4/internal/system"
 )
 
 func TestFactoryResolvesPiAdapter(t *testing.T) {
@@ -72,9 +73,11 @@ func TestDefaultRegistrySupportedAgentsMatchesFactoryAgents(t *testing.T) {
 		model.AgentAntigravity,
 		model.AgentClaudeCode,
 		model.AgentCodex,
+		model.AgentConductor,
 		model.AgentCursor,
 		model.AgentDroid,
 		model.AgentGeminiCLI,
+		model.AgentGitHubCopilotCLI,
 		model.AgentHermes,
 		model.AgentKilocode,
 		model.AgentKimi,
@@ -147,6 +150,40 @@ func TestDefaultRegistryIncludesDroid(t *testing.T) {
 	}
 }
 
+func TestFactoryResolvesConductorAdapter(t *testing.T) {
+	adapter, err := NewAdapter(model.AgentConductor)
+	if err != nil {
+		t.Fatalf("NewAdapter(%q) returned error: %v", model.AgentConductor, err)
+	}
+
+	if got := adapter.Agent(); got != model.AgentConductor {
+		t.Fatalf("adapter.Agent() = %q, want %q", got, model.AgentConductor)
+	}
+}
+
+func TestDefaultRegistryIncludesConductor(t *testing.T) {
+	registry, err := NewDefaultRegistry()
+	if err != nil {
+		t.Fatalf("NewDefaultRegistry() returned error: %v", err)
+	}
+
+	adapter, ok := registry.Get(model.AgentConductor)
+	if !ok {
+		t.Fatalf("registry missing %s adapter", model.AgentConductor)
+	}
+
+	if got := adapter.Agent(); got != model.AgentConductor {
+		t.Fatalf("registry adapter.Agent() = %q, want %q", got, model.AgentConductor)
+	}
+
+	// Conductor inherits Claude Code configuration, so the adapter must claim
+	// no write capabilities.
+	if adapter.SupportsSkills() || adapter.SupportsSystemPrompt() || adapter.SupportsMCP() {
+		t.Fatalf("Conductor adapter claims write capabilities: skills=%t systemPrompt=%t mcp=%t",
+			adapter.SupportsSkills(), adapter.SupportsSystemPrompt(), adapter.SupportsMCP())
+	}
+}
+
 func TestFactoryRejectsUnsupportedOpenClawLookalike(t *testing.T) {
 	_, err := NewAdapter(model.AgentID("openclaw-beta"))
 	if err == nil {
@@ -155,5 +192,23 @@ func TestFactoryRejectsUnsupportedOpenClawLookalike(t *testing.T) {
 
 	if !errors.Is(err, ErrAgentNotSupported) {
 		t.Fatalf("NewAdapter() error = %v, want ErrAgentNotSupported", err)
+	}
+}
+
+// TestScanConfigsAgreesWithAdapterGlobalConfigDir pins scan-vs-adapter agreement:
+// every registered adapter's GlobalConfigDir must match the path reported by ScanConfigs.
+func TestScanConfigsAgreesWithAdapterGlobalConfigDir(t *testing.T) {
+	t.Setenv("COPILOT_HOME", "")
+	home := t.TempDir()
+	cfg := make(map[string]string)
+	for _, c := range system.ScanConfigs(home) {
+		cfg[c.Agent] = c.Path
+	}
+	reg, _ := NewDefaultRegistry()
+	skip := map[model.AgentID]bool{model.AgentAntigravity: true, model.AgentKiroIDE: true}
+	for _, id := range reg.SupportedAgents() {
+		if a, ok := reg.Get(id); ok && !skip[id] && cfg[string(id)] != a.GlobalConfigDir(home) {
+			t.Errorf("agent %q: ScanConfigs=%q, want %q", id, cfg[string(id)], a.GlobalConfigDir(home))
+		}
 	}
 }

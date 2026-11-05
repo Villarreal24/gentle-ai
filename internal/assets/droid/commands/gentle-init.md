@@ -1,5 +1,5 @@
 ---
-description: Run SDD Phase 1 (Init) to establish problem definition, boundaries, and scope
+description: Use the ODD Init role to establish problem definition, boundaries, and scope
 ---
 @gentle-ai-init
 

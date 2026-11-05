@@ -6,10 +6,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gentleman-programming/gentle-ai/v3/internal/agents"
-	"github.com/gentleman-programming/gentle-ai/v3/internal/model"
-	"github.com/gentleman-programming/gentle-ai/v3/internal/state"
-	"github.com/gentleman-programming/gentle-ai/v3/internal/system"
+	"github.com/gentleman-programming/gentle-ai/v4/internal/agents"
+	"github.com/gentleman-programming/gentle-ai/v4/internal/model"
+	"github.com/gentleman-programming/gentle-ai/v4/internal/state"
+	"github.com/gentleman-programming/gentle-ai/v4/internal/system"
 )
 
 func TestDroidOrchestratorInstallAndSyncParity(t *testing.T) {
@@ -35,8 +35,8 @@ func TestDroidOrchestratorInstallAndSyncParity(t *testing.T) {
 	orchContent := string(data)
 
 	for _, expectedText := range []string{
-		"Master SDD / ODD Coordinator droid for Gentle-AI",
-		"## Core SDD Pipeline",
+		"Master ODD Coordinator droid for Gentle-AI",
+		"## ODD Roles",
 		"**Init** (`@gentle-ai-init`)",
 		"**Apply** (`@gentle-ai-apply`)",
 		"**Verify** (`@gentle-ai-verify`)",
@@ -48,7 +48,7 @@ func TestDroidOrchestratorInstallAndSyncParity(t *testing.T) {
 		}
 	}
 
-	// 2. Verify ~/.factory/AGENTS.md carries the full Gentleman Orchestrator prompt with SDD pipeline
+	// 2. Verify ~/.factory/AGENTS.md carries the full Gentleman Orchestrator prompt with ODD guidance
 	agentsMdPath := filepath.Join(home, ".factory", "AGENTS.md")
 	agentsData, err := os.ReadFile(agentsMdPath)
 	if err != nil {

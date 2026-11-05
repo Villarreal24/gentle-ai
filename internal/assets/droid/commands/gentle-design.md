@@ -1,5 +1,5 @@
 ---
-description: Run SDD Phase 5 (Design) to define architectural contracts, types, and schemas
+description: Use the ODD Design role to define architectural contracts, types, and schemas
 ---
 @gentle-ai-design
 

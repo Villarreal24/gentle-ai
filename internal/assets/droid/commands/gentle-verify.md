@@ -1,5 +1,5 @@
 ---
-description: Run SDD Phase 8 (Verify) to execute test suites, linters, and quality gates
+description: Use the ODD Verify role to execute test suites, linters, and quality gates
 ---
 @gentle-ai-verify
 
