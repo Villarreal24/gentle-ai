@@ -74,9 +74,10 @@ the Factory Droid integration or the locally installed fork binary.
     Managed local backups were verified under
     `~/Documents/personal/.gentle-ai-backups/2026-11-05-v4.3.1-29ec8b82/managed-pre-sync/`;
     no `~/.factory/system.md` existed. `~/.factory/mcp.json` was copied
-    separately outside the repository with mode `0600`; its contents were not
-    read. Temporary branch `update/gentle-ai-v4.3.1` is based on the original
-    feature head. A pre-activation recovery set was also created outside the
+    separately outside the repository with mode `0600`; its values were not
+    read during T1. A later check inspected only server names. Temporary branch
+    `update/gentle-ai-v4.3.1` is based on the original feature head. A
+    pre-activation recovery set was also created outside the
     checkout at
     `~/Documents/personal/.gentle-ai-backups/2026-11-05-v4.3.1-29ec8b82/activation-pre-install-2026-11-05/`.
     Its Git bundle contains both branches at `29ec8b82` and `ed825830` and
@@ -164,23 +165,101 @@ the Factory Droid integration or the locally installed fork binary.
     The binary reports `gentle-ai 4.3.1-villarreal24.1`; `--help` and
     `sync --help` both passed. `MINISIGN_PUBLIC_KEYS_CANONICAL` was unavailable,
     so this temporary binary keeps the updater's fail-closed default. It has
-    not been installed.
+    not yet been installed at the point T3 completed; T4 records its
+    installation.
 
-- [ ] **T4. Install and synchronize within the authorized scope.**
+- [x] **T4. Install and synchronize within the authorized scope.**
   - Route: bounded local operation after validation; risk is high because sync
     can modify global configuration.
-  - Replace the active binary only after its temporary build passes.
-  - Run `sync --dry-run` first. The current sync implementation's dry-run
-    reports components and step counts, not a per-file diff. A normal sync can
-    refresh Persona, Engram, Context7, GGA, Skills, shared skills, and
-    persisted CodeGraph wiring even when `--agents droid` is specified.
-  - Independent v4 source review confirmed that selecting `droid` does not
-    fence those global stages. `--scope workspace` skips global `~/.factory`
-    assets and cannot satisfy this task. Do not run real sync until the dry-run
-    shows an authorized component set or the user approves additional effects.
-  - Proceed only if the effective actions stay within the approved Droid
-    assets and Engram integration. If unrelated tools/configuration would be
-    refreshed, stop and ask before applying sync.
+  - Installed the verified temporary candidate at `~/bin/gentle-ai`. The
+    candidate reports `gentle-ai 4.3.1-villarreal24.1`; `--help` and
+    `sync --help` passed before installation. Its SHA-256 is
+    `4560bdd9761e059b7e7816540e6d338ad4cd5a0660921e80a871d63504c71d93`, and
+    the installed file has the same SHA-256. `command -v gentle-ai` resolves
+    `/Users/angelvillarreal/bin/gentle-ai`.
+  - Post-install invocations of
+    `/Users/angelvillarreal/bin/gentle-ai --version` and the requested global
+    dry-run were killed with exit 137 by the command supervisor. The same-byte
+    candidate at
+    `/tmp/gentle-ai-v4.3.1-factory-droid-merge-check-0ee790351` ran the
+    requested dry-run successfully from this checkout.
+  - Dry-run result: `Agents: droid`; managed components `engram, skills,
+    context7, gga, persona`; 1 prepare step and 13 apply steps. The dry-run
+    reports components and counts, not a per-file diff.
+  - The result includes out-of-scope `skills`, `context7`, `gga`, and `persona`
+    in addition to the authorized Engram integration. The prior source review
+    also found that persisted CodeGraph wiring may be refreshed, but the
+    dry-run does not report file-level effects or list CodeGraph separately.
+    Selecting `droid` does not fence these global stages; `--scope workspace`
+    skips global assets and cannot satisfy this task.
+  - On 2026-11-05, the user explicitly approved the additional global scope:
+    `skills` (including shared skills), `context7`, `gga`, `persona`, and
+    possible CodeGraph/configuration effects, in addition to Engram. The
+    approval is component-level because the dry-run exposes no file-level plan.
+  - Read only safe selector metadata from `~/.gentle-ai/state.json`:
+    installed agents are `claude-code`, `cursor`, `vscode-copilot`, and
+    `droid`; selected components are `engram`, `sdd`, `skills`, `context7`,
+    `gga`, and `persona`; skill preset is `ecosystem-only`; CodeGraph is the
+    selected community tool. The preset resolves to eight skills:
+    `judgment-day`, `go-testing`, `skill-creator`, `skill-improver`,
+    `skill-registry`, `chained-pr`, `cognitive-doc-design`, and
+    `work-unit-commits`. No environment overrides for `GENTLE_AI_HOME`,
+    `XDG_CONFIG_HOME`, `COPILOT_HOME`, or `PI_CODING_AGENT_DIR` are set.
+  - CodeGraph guidance can refresh the selected Claude Code and Cursor prompt
+    files and create the currently absent
+    `~/.copilot/copilot-instructions.md`. OpenCode is not selected, so the
+    conditional `codegraph install --target opencode --location global --yes`
+    branch will not run; the `codegraph` executable is present but was not
+    invoked. Pi's default agent directory is absent and no override is set, so
+    its CodeGraph refresh is a no-op. The selected Droid assets may also
+    receive rendered CodeGraph guidance.
+  - The existing MCP server names are `atlassian`, `context7`, and `engram`;
+    their configuration values were not read. The GGA provider config is
+    present, but the explicit Droid-only selection has no GGA provider mapping.
+  - The global pipeline can retire historical SDD files only when their
+    ownership/content checks pass; edited or unproven files are preserved. It
+    also increments a local sync counter and can prune old snapshots beyond
+    five. Five snapshots existed before sync. A one-run `DO_NOT_TRACK=1` will
+    suppress outbound telemetry without changing the persistent opt-out.
+  - A private pre-sync backup was created and verified at
+    `~/Documents/personal/.gentle-ai-backups/2026-11-05-v4.3.1-29ec8b82/sync-preflight-2026-11-05/`.
+    It contains 16 present target paths, including `.gentle-ai/` with all five
+    existing snapshots; the absent Copilot instruction path is recorded in
+    `manifest.json`. The backup root is mode `0700`, the manifest is `0600`,
+    and `ditto` preserved and verified file hashes, modes, symlinks, and
+    directory inventories. No config contents or credentials were printed.
+  - On 2026-11-05, the user authorized running the real sync from the
+    byte-identical temporary candidate because the installed path receives
+    SIGKILL. The command used `DO_NOT_TRACK=1`; it completed successfully and
+    reported `Agents synced: droid`, managed components
+    `engram, skills, context7, gga, persona`, and 53 changed files.
+  - The 53 reported files were `.factory/mcp.json`, `.factory/AGENTS.md`,
+    15 native Droid definitions/ownership-ledger files, 22 native command
+    files, three selected skill files plus three shared references in each of
+    `.factory/skills` and `.agents/skills`, and CodeGraph guidance in
+    `.claude/CLAUDE.md` and `.cursor/rules/gentle-ai.mdc`. No GGA files changed.
+    The OpenCode installer did not run; no Pi or Copilot-instructions file was
+    changed. No historical SDD assets were removed.
+  - Post-sync comparison against the private snapshot found three additions
+    and three removals in `.gentle-ai/backups`: the sync created snapshot
+    `20261105183131.327819000` and pruned
+    `20260929200023.736578000`. The pruned snapshot remains in the external
+    pre-sync backup. `~/.gentle-ai/state.json` changed for sync provenance;
+    persisted agent/component/preset selections, model assignments, persona,
+    and RDD preferences were unchanged.
+  - Preservation checks passed: both custom Droid files, `.factory/settings.json`,
+    `.factory/hooks.json`, all three GGA files, and the unrelated `atlassian`
+    MCP entry are unchanged. MCP server names remain `atlassian`, `context7`,
+    and `engram`; other top-level MCP settings are unchanged.
+  - The comparison also found a separate `~/.claude.json` cache delta limited
+    to `cachedGrowthBookFeatures`, `cachedGrowthBookFeaturesAt`, and
+    `cachedUsageUtilization`. It was not listed among the sync's changed files;
+    no cache values were read or printed, and the file was left untouched.
+  - The installed-path SIGKILL remains unresolved. Independent source and
+    metadata review found no code explanation; both files pass signature
+    verification, and the candidate has the same SHA-256 as the installed
+    binary. The actual sync used the candidate at `/tmp`; no cause for the
+    installed-path termination was established.
   - Preserve native ownership semantics, user-edited files, custom droids,
     model assignments, and other preferences. Do not run setup or update
     another tool.
@@ -240,9 +319,16 @@ skip.
   focused Droid CLI tests passed.
 - The repository-declared Go version is `1.25.10`; the available compiler was
   Go `1.26.6`. The temporary build passed on that newer compiler.
-- Real sync remains pending review of its dry-run. The v4 sync can touch global
-  components beyond Droid and Engram; do not run it until the effective scope
-  is authorized.
+- The candidate and installed binary have identical SHA-256 values, but
+  post-install invocation through `~/bin/gentle-ai` was killed with exit 137.
+  The user authorized and the byte-identical candidate completed the real sync
+  with `DO_NOT_TRACK=1`; independent source and signature checks did not
+  explain the path-specific termination.
+- The user approved the additional global sync scope on 2026-11-05:
+  `skills` (including shared skills), `context7`, `gga`, `persona`, and possible
+  CodeGraph/configuration effects, in addition to Engram. Exact selectors and
+  targets were mapped and backed up before sync. No broad tests were rerun
+  because no executable code changed.
 
 `TestRenderedGuidanceHasNoRetiredWorkflowReferences/codex` is an authorized
 environmental skip because `codex` is not available in `PATH`. Do not install
@@ -263,6 +349,10 @@ ask once about the chain strategy before committing.
 - T1 closed by `7843d964` and completion evidence recorded in `13b82a4e`:
   binary, Git tag, managed-asset backups, private MCP backup, temporary branch,
   and task record are verified.
+- Reconciled the task record with commit `ed825830`, mirrored the full document
+  to Engram, and committed the backup/merge evidence in `4cb17a077`. The backup
+  bundle, pending document copy, and pre-activation 3.0.0 binary were verified
+  outside the checkout.
 - `origin` and `upstream` refs were fetched and the official v4.3.1 tag was
   verified. The merge is committed as `ed825830`; the original feature branch
   and `origin/feat/factory-droid-adapter` remain at `29ec8b82`.
@@ -276,11 +366,35 @@ ask once about the chain strategy before committing.
   independent review and temporary build passed.
 - The temporary build used Go 1.26.6, not the repository-declared Go 1.25.10;
   no release trust-anchor variable was available, so the temp binary's updater
-  remains fail-closed. It has not replaced the active binary.
+  remains fail-closed. It now replaces the active binary, with a matching
+  SHA-256; the previous 3.0.0 executable remains backed up for rollback.
+- The global dry-run ran from the byte-identical temporary candidate after the
+  installed-path invocation was killed. It reported `engram, skills, context7,
+  gga, persona` and 13 apply steps.
+- The user explicitly approved the additional global components and possible
+  CodeGraph/configuration effects. The real sync completed via the byte-identical
+  candidate with telemetry opted out for that invocation. No push has occurred.
+- Persisted state selects `claude-code`, `cursor`, `vscode-copilot`, and
+  `droid`, with the `ecosystem-only` preset and CodeGraph; OpenCode and Pi are
+  not selected. The conditional OpenCode installer will not run. A private
+  snapshot of 16 present sync targets plus the absent Copilot instruction path
+  is verified under `sync-preflight-2026-11-05/`.
+- The sync may retire only ownership-verified historical SDD assets and may
+  prune snapshots beyond five; all five prior snapshots are in the external
+  backup. In this run no SDD assets were removed; the oldest internal snapshot
+  was rotated out and remains recoverable from the external backup. Preservation
+  checks passed for custom droids, model preferences, unrelated MCP, settings,
+  hooks, and GGA files.
+- The sync reported 53 changed files. A separate `~/.claude.json` cache delta
+  was outside that report and left untouched; only cache-field names were
+  inspected, not their values.
 - An untracked `.codegraph/.gitignore` remains outside the commit and was not
   inspected or changed.
 
 ## Next Step
 
-Install the verified temporary binary and inspect `sync --dry-run`; pause before
-real sync if it would refresh out-of-scope components.
+Finish the task record and Engram mirror with the verified sync outcome, commit
+only the ODD document as evidence, then verify GitHub identity
+`Villarreal24` and destination `Villarreal24/gentle-ai`. Fast-forward and push
+normally only if identity, destination, and refs match. The installed-path
+SIGKILL remains an unresolved operational note.
