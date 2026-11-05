@@ -271,6 +271,18 @@ the Factory Droid integration or the locally installed fork binary.
     `Villarreal24`; then use a normal push only to `origin`.
   - Stop if the intended account is unavailable. Never force-push, push to
     `upstream`, or create a PR.
+  - Verification on 2026-11-05: `origin` resolves to
+    `Villarreal24/gentle-ai`; the remote `feat/factory-droid-adapter` ref,
+    local original branch, and local tracking ref all remain at
+    `29ec8b82226a8bae19314691adf348eaff743bb4`. The temporary branch is ahead
+    and fast-forwardable.
+  - The first `gh api user --jq .login` check returned `lvillareal-cc`, so
+    publication stopped without changing refs. After the user reauthenticated,
+    the check returned `Villarreal24`; the repository API and sanitized `origin`
+    both confirm `Villarreal24/gentle-ai`. The remote feature ref still matches
+    local `feat/factory-droid-adapter` at `29ec8b82`, which is an ancestor of
+    `update/gentle-ai-v4.3.1` at `a87d634ac`. Fast-forward preconditions pass;
+    no fast-forward or push has yet run.
 
 ## Acceptance Criteria
 
@@ -388,13 +400,18 @@ ask once about the chain strategy before committing.
 - The sync reported 53 changed files. A separate `~/.claude.json` cache delta
   was outside that report and left untouched; only cache-field names were
   inspected, not their values.
+- The first GitHub check found `lvillareal-cc` and stopped publication. After
+  reauthentication, a fresh check returned `Villarreal24`, confirmed the
+  `Villarreal24/gentle-ai` destination, and verified the remote feature ref is
+  still at `29ec8b82`, an ancestor of the temporary branch. No push has yet
+  occurred.
 - An untracked `.codegraph/.gitignore` remains outside the commit and was not
   inspected or changed.
 
 ## Next Step
 
-Finish the task record and Engram mirror with the verified sync outcome, commit
-only the ODD document as evidence, then verify GitHub identity
-`Villarreal24` and destination `Villarreal24/gentle-ai`. Fast-forward and push
-normally only if identity, destination, and refs match. The installed-path
-SIGKILL remains an unresolved operational note.
+Commit the verified identity and sync evidence in the ODD document, then
+fast-forward `feat/factory-droid-adapter` to `update/gentle-ai-v4.3.1` and push
+normally to `origin` only. Stop if the ref changes or the push is rejected.
+The installed-path SIGKILL remains an operational note; the authorized sync
+completed from the byte-identical candidate.
