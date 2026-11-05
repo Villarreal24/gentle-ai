@@ -264,25 +264,26 @@ the Factory Droid integration or the locally installed fork binary.
     model assignments, and other preferences. Do not run setup or update
     another tool.
 
-- [ ] **T5. Advance and publish the verified feature branch.**
+- [x] **T5. Advance and publish the verified feature branch.**
   - Route: parent-controlled Git operation after all checks; push risk is high.
   - Fast-forward the original `feat/factory-droid-adapter` branch to the
     verified temporary branch. Confirm the authenticated GitHub account is
     `Villarreal24`; then use a normal push only to `origin`.
   - Stop if the intended account is unavailable. Never force-push, push to
     `upstream`, or create a PR.
-  - Verification on 2026-11-05: `origin` resolves to
-    `Villarreal24/gentle-ai`; the remote `feat/factory-droid-adapter` ref,
-    local original branch, and local tracking ref all remain at
-    `29ec8b82226a8bae19314691adf348eaff743bb4`. The temporary branch is ahead
-    and fast-forwardable.
-  - The first `gh api user --jq .login` check returned `lvillareal-cc`, so
-    publication stopped without changing refs. After the user reauthenticated,
-    the check returned `Villarreal24`; the repository API and sanitized `origin`
-    both confirm `Villarreal24/gentle-ai`. The remote feature ref still matches
-    local `feat/factory-droid-adapter` at `29ec8b82`, which is an ancestor of
-    `update/gentle-ai-v4.3.1` at `a87d634ac`. Fast-forward preconditions pass;
-    no fast-forward or push has yet run.
+  - The first `gh api user --jq .login` check returned `lvillareal-cc`; the
+    identity gate stopped publication without changing refs. After the user
+    reauthenticated, a fresh check returned `Villarreal24`; the repository API
+    and `origin` both confirmed `Villarreal24/gentle-ai`.
+  - Before advancing, the remote feature ref, local tracking ref, and local
+    original branch all matched `29ec8b82226a8bae19314691adf348eaff743bb4`.
+    The temporary branch was its fast-forward descendant. The local original
+    branch was advanced to `7d7afb897` using an expected-old-ref check.
+  - A normal push to `origin` succeeded:
+    `29ec8b822..7d7afb897 feat/factory-droid-adapter -> feat/factory-droid-adapter`.
+    No force-push, upstream push, or PR was used. Published commit:
+    `7d7afb897` (`docs(odd): record GitHub identity revalidation`); this
+    document-only closeout will publish the final push evidence.
 
 ## Acceptance Criteria
 
@@ -385,7 +386,7 @@ ask once about the chain strategy before committing.
   gga, persona` and 13 apply steps.
 - The user explicitly approved the additional global components and possible
   CodeGraph/configuration effects. The real sync completed via the byte-identical
-  candidate with telemetry opted out for that invocation. No push has occurred.
+  candidate with telemetry opted out for that invocation.
 - Persisted state selects `claude-code`, `cursor`, `vscode-copilot`, and
   `droid`, with the `ecosystem-only` preset and CodeGraph; OpenCode and Pi are
   not selected. The conditional OpenCode installer will not run. A private
@@ -401,17 +402,13 @@ ask once about the chain strategy before committing.
   was outside that report and left untouched; only cache-field names were
   inspected, not their values.
 - The first GitHub check found `lvillareal-cc` and stopped publication. After
-  reauthentication, a fresh check returned `Villarreal24`, confirmed the
-  `Villarreal24/gentle-ai` destination, and verified the remote feature ref is
-  still at `29ec8b82`, an ancestor of the temporary branch. No push has yet
-  occurred.
+  reauthentication, a fresh check returned `Villarreal24`; `origin` and the
+  repository API confirmed `Villarreal24/gentle-ai`. The branch was
+  fast-forwarded and pushed normally to `origin` at `7d7afb897`.
 - An untracked `.codegraph/.gitignore` remains outside the commit and was not
   inspected or changed.
 
 ## Next Step
 
-Commit the verified identity and sync evidence in the ODD document, then
-fast-forward `feat/factory-droid-adapter` to `update/gentle-ai-v4.3.1` and push
-normally to `origin` only. Stop if the ref changes or the push is rejected.
-The installed-path SIGKILL remains an operational note; the authorized sync
-completed from the byte-identical candidate.
+No implementation work remains. Keep this verified publication record with
+the feature branch; do not open a PR, push to `upstream`, or rewrite history.
